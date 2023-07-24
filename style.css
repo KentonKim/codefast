@@ -1,9 +1,14 @@
 * {
     box-sizing: border-box;
+    border: 1px solid green;
 }
 
 .h-full {
     height: 100%;
+}
+
+.w-full {
+    width: 100%;
 }
 
 /* Position Classes */
@@ -11,4 +16,29 @@
     position: relative;
 }
 
-.
+.absolute {
+    position: absolute;
+}
+
+.left__corner {
+    top: 0;
+    left: 0;
+}
+
+.page-container {
+
+}
+
+/* Z-index */
+.z1 {
+    z-index: 1;
+}
+
+.z2 {
+    z-index: 2;
+}
+
+/* ID specific */
+#typing__box {
+    margin-top: -1px;
+}
