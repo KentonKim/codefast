@@ -1,6 +1,8 @@
 * {
     box-sizing: border-box;
     border: 1px solid green;
+    font-family: 'Open Sans', Verdana, Arial, sans-serif; 
+    font-size: 50px;
 }
 
 .h-full {
@@ -41,4 +43,59 @@
 /* ID specific */
 #typing__box {
     margin-top: -1px;
+}
+
+/* Text Colors */
+.colorComment {
+    color: #6a9955;
+}
+
+.colorLanguage {
+    color: #569CD6;
+}
+
+.colorRegex {
+    color: #646695;
+}
+
+.colorNumeric {
+    color: #b5cea8;
+}
+
+.colorClass {
+    color: #4ec9b0;
+}
+
+.colorReturn {
+    color: #C586C0;
+}
+
+.colorType {
+    color: #007acc;
+}
+
+.colorMethod {
+    color: #D7BA7D;
+}
+
+/* vscode background*/
+.dark1bgd{
+    color: #1e1e1e;
+}
+
+.dark2bgd {
+    color: #252526;
+}
+
+.dark3bgd {
+    color: #2d2d30;
+}
+
+.dark4bgd {
+    color: #3e3e42;
+}
+
+/* Word */
+.word {
+    color: #c8c8c8;
 }
