@@ -23,16 +23,24 @@ const wordInput = document.getElementById('wordsInput').value;
 
 // Typing
     // Event listener every keydown
+        // Case 1 (nonspace-char): correct
+            // add correct classlist to letter
+        // Case 2 (nonspace-char): incorrect
+            // add incorrect classlist to letter
+        // Case 3 (spacebar at end of word): correct
+            // move onto next word (nothing happens)
+        // Case 4 (excessive spacebar): technically correct
+            // ex: def fxn(filename, start_depth=None): ---> def fxn( filename , start_depth = None ) :
+        // Case 5 (not enough spacebar): technically correct
+        // Case 6 (preemptive spacebar): incorrect
 
-    // Case 1 (nonspace-char): correct
-        // add correct classlist to letter
-    // Case 2 (nonspace-char): incorrect
-        // add incorrect classlist to letter
-    // Case 3 (spacebar at end of word): correct
-        // move onto next word (nothing happens)
-    // Case 4 (excessive spacebar): technically correct
-        // ex: def fxn(filename, start_depth=None): ---> def fxn( filename , start_depth = None ) :
-
+    // Backspace
+        // Case 1 (At start of word)
+            // Case 1.1 (Previous word was incorrect)
+                // Put cursor right after most recent filled in letter (correct / incorrect / extra)
+            // Case 1.2 (Previous word was correct)
+                // Unable to backspace
+            // 
 
 
 // spaces between words and between parentheses should not count as an error
