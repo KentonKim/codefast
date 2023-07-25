@@ -40,13 +40,24 @@ const wordInput = document.getElementById('wordsInput').value;
                 // Put cursor right after most recent filled in letter (correct / incorrect / extra)
             // Case 1.2 (Previous word was correct)
                 // Unable to backspace
-            // 
+        // Case 2 (At middle or end of work)
+            // Backspace normally
 
 
 // spaces between words and between parentheses should not count as an error
 
+// End condition
+    // Identify end conditon
+        // Timer
+        // Passage
+        // Manually end
+    // Stop all Event listeners
 
+// Results
+    // WPM
+    // Style points
+    // Accuracy
+    // Raw
+    // Characters
 
-// isMatching
-
-// function 
+// Replay feature
