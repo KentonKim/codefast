@@ -2,7 +2,7 @@
     box-sizing: border-box;
     border: 1px solid green;
     font-family: 'Open Sans', Verdana, Arial, sans-serif; 
-    font-size: 50px;
+    font-size: 5px;
 }
 
 .h-full {
@@ -79,20 +79,20 @@
 }
 
 /* vscode background*/
-.dark1bgd{
-    color: #1e1e1e;
+.darkbgd1{
+    background-color: #1e1e1e;
 }
 
-.dark2bgd {
-    color: #252526;
+.darkbgd2 {
+    background-color: #252526;
 }
 
-.dark3bgd {
-    color: #2d2d30;
+.darkbgd3 {
+    background-color: #2d2d30;
 }
 
-.dark4bgd {
-    color: #3e3e42;
+.darkbgd4 {
+    background-color: #3e3e42;
 }
 
 /* Word */
