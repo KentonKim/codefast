@@ -1,7 +1,13 @@
 const wordBank = document.getElementById('words');
-const wordInput = document.getElementById('wordsInput').value;
+const wordInput = document.getElementById('wordsInput');
 
-
+const testString = `class Solution: def twoSum(self, nums: List[int], target: int) -> List[int]:
+d = {}
+for index, value in enumerate(nums):
+if target-value in d:
+return [d[target-value],index]
+d[value] = index`;
+            
 // On startup
     // function getString() 
         // get passage of code to be typed out
@@ -13,6 +19,10 @@ const wordInput = document.getElementById('wordsInput').value;
         // "for i in range(len(str)):\n print(i)"  ---> ['for','i','in','range(len(str)):', '\n', '\t', 'print(i)']
         // perhaps '\n' can indicate for the rightmost word to have a margin-right:auto so that the next box will have to start on the next line
 
+const word = document.createElement('div');
+word.textContent = testString;
+word.classList.add('word')
+wordBank.appendChild(word);
 
 // Start typing
     // Event listener for the right letter
