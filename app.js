@@ -26,7 +26,32 @@ const attempt = parseStringToLetters(testString);
 console.log(attempt);
 
         // perhaps '\n' can indicate for the rightmost word to have a margin-right:auto so that the next box will have to start on the next line
-function display 
+// function display 
+
+function displayWords(arrayOfArrays, wordBoxElement) {
+    let lineElement = document.createElement('div');
+    lineElement.classList.add("line","flexDisplay");
+
+    for (let i = 0; i < arrayOfArrays.length; i++) {
+        let wordElement = document.createElement('div');
+        wordElement.classList.add('word');
+        for (let j = 0; j < arrayOfArrays[i].length; j++) {
+            let letterElement = document.createElement('letter');
+            letterElement.textContent = arrayOfArrays[i][j];
+            wordElement.appendChild(letterElement);
+        }
+
+        lineElement.appendChild(wordElement);
+        if (wordElement.childNodes[0].textContent == "\n"){
+            wordElement.classList.add('endOfLine');
+            wordBoxElement.appendChild(lineElement);
+            lineElement = document.createElement('div');
+            lineElement.classList.add("line","flexDisplay");
+        }
+    }
+}
+
+displayWords(attempt,wordBank);
 
 // Start typing
     // Event listener for the right letter
