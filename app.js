@@ -1,6 +1,5 @@
 const wordBank = document.getElementById('words');
 const wordInput = document.getElementById('wordsInput');
-
 const testString = `class Solution: def twoSum(self, nums: List[int], target: int) -> List[int]:
 d = {}
 for index, value in enumerate(nums):
@@ -15,6 +14,18 @@ d[value] = index`;
         // return string
 
     // function parseStringToWords( string ) {}
+function parseStringToWords(string) {
+    let arrayOfLetters = [] ;
+    const words = string.match(/[^\s]+|\n/g);
+    for (let word of words){
+        arrayOfLetters.push(word.split(''));
+    }
+    return arrayOfLetters;
+}
+
+const attempt = parseStringToWords(testString)
+console.log(attempt);
+
         // parse the string into words and symbols
         // "for i in range(len(str)):\n print(i)"  ---> ['for','i','in','range(len(str)):', '\n', '\t', 'print(i)']
         // perhaps '\n' can indicate for the rightmost word to have a margin-right:auto so that the next box will have to start on the next line
