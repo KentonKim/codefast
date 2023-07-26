@@ -5,6 +5,16 @@
     font-size: 5px;
 }
 
+html {
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    display: block;
+}
+
+body {
+    margin: 0;
+}
+
 .h-full {
     height: 100%;
 }
