@@ -1,6 +1,6 @@
 * {
     box-sizing: border-box;
-    border: 1px solid green;
+    /* border: 1px solid green; */
     font-family: 'Open Sans', Verdana, Arial, sans-serif; 
     font-size: 30px;
 }
@@ -21,6 +21,10 @@ body {
 
 .w-full {
     width: 100%;
+}
+
+.hidden {
+    visibility: hidden;
 }
 
 /* Position Classes */
@@ -103,7 +107,7 @@ body {
 
 /* Div Specifics */
 .word {
-    color: #c8c8c8;
+    color: #3e3e42;
     margin: 8px;
 }
 
@@ -118,4 +122,17 @@ body {
 
 .lineBreak {
     flex-grow: 1;
+}
+
+/* Letter Specific */
+.correct {
+    color: #c8c8c8;
+}
+
+.incorrect {
+    color: red;
+}
+
+.styleIncorrect {
+    color: orange;
 }

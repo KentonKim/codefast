@@ -1,11 +1,12 @@
 const wordBank = document.getElementById('words');
 const wordInput = document.getElementById('wordsInput');
 const testString = `class Solution: def twoSum(self, nums: List[int], target: int) -> List[int]:
-                    d = {}
-                    for index, value in enumerate(nums):
-                    if target-value in d:
-                    return [d[target-value],index]
-                    d[value] = index`;
+    d = {}
+    for index, value in enumerate(nums):
+        if target-value in d:
+            return [d[target-value], index]
+        d[value] = index`;
+let characterPointer = 0;
             
 // On startup
     // function getString() 
@@ -22,12 +23,6 @@ function parseStringToLetters(string) {
     return arrayOfLetters;
 }
 
-const attempt = parseStringToLetters(testString);
-console.log(attempt);
-
-        // perhaps '\n' can indicate for the rightmost word to have a margin-right:auto so that the next box will have to start on the next line
-// function display 
-
 function displayWords(arrayOfArrays, wordBoxElement) {
     let lineElement = document.createElement('div');
     lineElement.classList.add("line","flexDisplay");
@@ -42,17 +37,49 @@ function displayWords(arrayOfArrays, wordBoxElement) {
         }
 
         lineElement.appendChild(wordElement);
+
         if (wordElement.childNodes[0].textContent == "\n"){
-            wordElement.classList.add('endOfLine');
+            wordElement.childNodes[0].textContent = "↩";
             wordBoxElement.appendChild(lineElement);
             lineElement = document.createElement('div');
             lineElement.classList.add("line","flexDisplay");
         }
     }
+    // Last Line
+    wordBoxElement.appendChild(lineElement);
 }
 
+const attempt = parseStringToLetters(testString);
+console.log(attempt);
 displayWords(attempt,wordBank);
 
+const wordsArray = document.querySelectorAll('.word');
+const characterArray = document.querySelectorAll('letter');
+document.addEventListener('keydown', (e) => {
+    const key = e.key;
+    wordInput.value += key;
+    e.preventDefault();
+});
+
+
+document.addEventListener('keydown', letterInputEvent);
+
+function letterInputEvent(e) {
+    const key = e.key;
+    const regexAllowableKeys = /^(?!Shift$)[\na-zA-Z0-9!@#$%^&*\`\~\(\)\-\_\=\+\[\]\{\}\;\:\'\"\,\<\.\>\/\?\\\|]/;
+    if (regexAllowableKeys.test(key)) {
+        // Correct Character
+        if (key == characterArray[characterPointer].textContent || (key == "Enter" && characterArray[characterPointer].textContent == "↩")) {
+            if (key == "Enter") {
+                characterArray[characterPointer].classList.add('hidden');
+            }
+            characterArray[characterPointer].classList.add('correct')
+            console.log('correct');
+            characterPointer++;
+        }
+    }
+    return
+}
 // Start typing
     // Event listener for the right letter
 
