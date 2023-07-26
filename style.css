@@ -2,7 +2,7 @@
     box-sizing: border-box;
     border: 1px solid green;
     font-family: 'Open Sans', Verdana, Arial, sans-serif; 
-    font-size: 5px;
+    font-size: 30px;
 }
 
 html {
@@ -35,10 +35,6 @@ body {
 .left__corner {
     top: 0;
     left: 0;
-}
-
-.page-container {
-
 }
 
 /* Z-index */
@@ -105,7 +101,21 @@ body {
     background-color: #3e3e42;
 }
 
-/* Word */
+/* Div Specifics */
 .word {
     color: #c8c8c8;
+    margin: 8px;
+}
+
+/* Flex */
+.flexDisplay {
+    display: flex;
+}
+
+.rowWrap {
+    flex-flow: wrap;
+}
+
+.lineBreak {
+    flex-grow: 1;
 }
