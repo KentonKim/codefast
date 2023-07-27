@@ -113,7 +113,7 @@ body {
 /* Div Specifics */
 .word {
     color: #77777f;
-    margin: 0px;
+    margin: 8px;
 }
 
 .line {
@@ -127,6 +127,10 @@ body {
 
 letter {
     white-space: pre;
+}
+
+.active {
+    border: 1px solid white;
 }
 
 /* Flex */

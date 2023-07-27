@@ -26,16 +26,24 @@ function displayWords(arrayOfWords, wordBoxElement) {
 
     // For each word
     for (let i = 0; i < arrayOfWords.length; i++) {
+        wordElement = document.createElement('div');
+        wordElement.classList.add('word');
+
+        if (i == 0) {
+            wordElement.classList.add("active");
+        }
+
         if (arrayOfWords[i] == "\n") {
-            letterElement.textContent += "↩";
+            letterElement = document.createElement('letter');
+            letterElement.textContent = "↩";
+            wordElement.appendChild(letterElement);
+            lineElement.appendChild(wordElement);
             wordBoxElement.appendChild(lineElement);
             lineElement = document.createElement('div');
             lineElement.classList.add("line");
             continue;
         }
 
-        wordElement = document.createElement('div');
-        wordElement.classList.add('word');
 
         if (arrayOfWords[i] == "    ") {
             letterElement = document.createElement('letter');
@@ -49,14 +57,6 @@ function displayWords(arrayOfWords, wordBoxElement) {
                 wordElement.appendChild(letterElement);
             }
         }
-        lineElement.appendChild(wordElement);
-
-        // Create space
-        letterElement = document.createElement('letter');
-        letterElement.textContent = " ";
-        wordElement = document.createElement('div');
-        wordElement.classList.add('word');
-        wordElement.appendChild(letterElement);
         lineElement.appendChild(wordElement);
     }
     // Last Line
@@ -86,6 +86,7 @@ function letterInputEvent(e) {
         }
 
         currentLine.classList.remove('selectedLine');
+        currentWord.classList.remove('active');
 
         // Check if you're at the beginning of a new line (you haven't written anything at new line)
         if (currentLine.childNodes[0] == currentWord 
@@ -102,10 +103,22 @@ function letterInputEvent(e) {
         currentLine.classList.add('selectedLine');
 
         currentWord = currentLine.childNodes[0];
+        currentWord.classList.add('active');
         return currentLine;
     }
 
     function moveToNextWord() {
+        // Check if its the last word
+        if (currentWord.nextSibling == null) {
+            return;
+        }
+        currentWord.classList.remove('active');
+        currentWord = currentWord.nextSibling
+        currentWord.classList.add('active');
+
+    }
+
+    function moveToPreviousWord() {
 
     }
 
