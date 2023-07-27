@@ -15,25 +15,23 @@ let characterPointer = 0;
         // return string
 
 function parseStringToLetters(string) {
-    let arrayOfLetters = [];
-    const words = string.match(/[^\s]+|\n/g);
-    for (let word of words) {
-        arrayOfLetters.push(word.split(''));
-    }
-    return arrayOfLetters;
+    return string.match(/[^\s]+|\n/g);
 }
 
-function displayWords(arrayOfArrays, wordBoxElement) {
+function displayWords(arrayOfWords, wordBoxElement) {
 
     let lineElement = document.createElement('div');
     lineElement.classList.add("line","flexDisplay");
 
-    for (let i = 0; i < arrayOfArrays.length; i++) {
+    // For each word
+    for (let i = 0; i < arrayOfWords.length; i++) {
         let wordElement = document.createElement('div');
         wordElement.classList.add('word');
-        for (let j = 0; j < arrayOfArrays[i].length; j++) {
+
+
+        for (let j = 0; j < arrayOfWords[i].length; j++) {
             let letterElement = document.createElement('letter');
-            letterElement.textContent = arrayOfArrays[i][j];
+            letterElement.textContent = arrayOfWords[i][j];
             wordElement.appendChild(letterElement);
         }
 
