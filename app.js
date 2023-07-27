@@ -24,6 +24,7 @@ function parseStringToLetters(string) {
 }
 
 function displayWords(arrayOfArrays, wordBoxElement) {
+
     let lineElement = document.createElement('div');
     lineElement.classList.add("line","flexDisplay");
 
@@ -66,19 +67,28 @@ document.addEventListener('keydown', letterInputEvent);
 
 function letterInputEvent(e) {
     const key = e.key;
-    const regexAllowableKeys = /^(?!Shift$)[\na-zA-Z0-9!@#$%^&*\`\~\(\)\-\_\=\+\[\]\{\}\;\:\'\"\,\<\.\>\/\?\\\|]/;
-    if (regexAllowableKeys.test(key)) {
-        // Correct Character
-        if (key == characterArray[characterPointer].textContent || (key == "Enter" && characterArray[characterPointer].textContent == "↩")) {
-            if (key == "Enter") {
-                characterArray[characterPointer].classList.add('hidden');
-            }
-            characterArray[characterPointer].classList.add('correct')
-            console.log('correct');
-            characterPointer++;
-        }
+    const regexAllowableKeys = /^(?!Shift$)[\b\na-zA-Z0-9!@#$%^&*\`\~\(\)\-\_\=\+\[\]\{\}\;\:\'\"\,\<\.\>\/\?\\\|]/;
+    if (!regexAllowableKeys.test(key)) {
+        return;
     }
-    return
+    if (key == "Backspace") {
+
+
+    }
+    // Case 1 (nonspace-char): correct
+    if (key == characterArray[characterPointer].textContent || (key == "Enter" && characterArray[characterPointer].textContent == "↩")) {
+        if (key == "Enter") {
+            characterArray[characterPointer].classList.add('hidden');
+        }
+        characterArray[characterPointer].classList.add('correct')
+        characterPointer++;
+    // Case 2 (nonspace-char): incorrect
+    }
+    else if (key != characterArray[characterPointer].textContent) {
+        characterArray[characterPointer].classList.add('incorrect')
+        characterPointer++;
+    }
+    return;
 }
 // Start typing
     // Event listener for the right letter
@@ -89,10 +99,6 @@ function letterInputEvent(e) {
 
 // Typing
     // Event listener every keydown
-        // Case 1 (nonspace-char): correct
-            // add correct classlist to letter
-        // Case 2 (nonspace-char): incorrect
-            // add incorrect classlist to letter
         // Case 3 (spacebar at end of word): correct
             // move onto next word (nothing happens)
         // Case 4 (excessive spacebar): technically correct
