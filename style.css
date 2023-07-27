@@ -3,6 +3,7 @@
     /* border: 1px solid green; */
     font-family: 'Open Sans', Verdana, Arial, sans-serif; 
     font-size: 30px;
+    tabindex: -1;
 }
 
 html {
@@ -55,6 +56,10 @@ body {
     margin-top: -1px;
 }
 
+#wordsWrap {
+    border: solid 1px white;
+}
+
 /* Text Colors */
 .colorComment {
     color: #6a9955;
@@ -90,7 +95,7 @@ body {
 
 /* vscode background*/
 .darkbgd1{
-    background-color: #1e1e1e;
+    background-color: #141414;
 }
 
 .darkbgd2 {
@@ -107,7 +112,7 @@ body {
 
 /* Div Specifics */
 .word {
-    color: #3e3e42;
+    color: #77777f;
     margin: 8px;
 }
 

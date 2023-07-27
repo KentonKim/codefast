@@ -1,12 +1,12 @@
 const wordBank = document.getElementById('words');
 const wordInput = document.getElementById('wordsInput');
+let characterPointer = 0;
 const testString = `class Solution: def twoSum(self, nums: List[int], target: int) -> List[int]:
     d = {}
     for index, value in enumerate(nums):
         if target-value in d:
             return [d[target-value], index]
         d[value] = index`;
-let characterPointer = 0;
             
 // On startup
     // function getString() 
@@ -22,7 +22,7 @@ function displayWords(arrayOfWords, wordBoxElement) {
     let letterElement;
     let wordElement;
     let lineElement = document.createElement('div');
-    lineElement.classList.add("line");
+    lineElement.classList.add("line", "darkbgd1");
 
     // For each word
     for (let i = 0; i < arrayOfWords.length; i++) {
@@ -43,12 +43,17 @@ function displayWords(arrayOfWords, wordBoxElement) {
         }
 
         if (arrayOfWords[i] == "    ") {
-            wordElement.classList.add('tab');
-        }
-        for (let j = 0; j < arrayOfWords[i].length; j++) {
             letterElement = document.createElement('letter');
-            letterElement.textContent = arrayOfWords[i][j];
+            letterElement.textContent = '    ';
+            letterElement.classList.add('tab');
             wordElement.appendChild(letterElement);
+        }
+        else {
+            for (let j = 0; j < arrayOfWords[i].length; j++) {
+                letterElement = document.createElement('letter');
+                letterElement.textContent = arrayOfWords[i][j];
+                wordElement.appendChild(letterElement);
+            }
         }
         lineElement.appendChild(wordElement);
     }
@@ -65,35 +70,40 @@ document.addEventListener('keydown', letterInputEvent);
 
 function letterInputEvent(e) {
     const key = e.key;
-    const regexAllowableKeys = /^(?!Shift$)[\b\na-zA-Z0-9!@#$%^&*\`\~\(\)\-\_\=\+\[\]\{\}\;\:\'\"\,\<\.\>\/\?\\\|]/;
+    const regexAllowableKeys = /^(?!Shift$)[ \t\b\na-zA-Z-9!@#$%^&*\`\~\(\)\-\_\=\+\[\]\{\}\;\:\'\"\,\<\.\>\/\?\\\|]/;
     if (!regexAllowableKeys.test(key)) {
         return;
     }
-    if (key == "Backspace") {
-        console.log('backapce')
-        characterPointer--;
-        characterArray[characterPointer].classList.remove('correct', 'incorrect');
+    if (key == "Tab") {
+        e.preventDefault(); // stops tab from indexing
         return;
     }
-
-    // Case 1 (nonspace-char): correct
-    let delaypointer;
-    if (key == characterArray[characterPointer].textContent || (key == "Enter" && characterArray[characterPointer].textContent == "↩")) {
-        if (key == "Enter") {
-            delaypointer = characterPointer
-            setTimeout(() => {
-                characterArray[delaypointer].classList.add('hidden');
-            }, 500);
+    if (key == "Backspace") {
+        return;
+    }
+    if (key == " "){
+        return;
+    }
+    if (key == "Enter") {
+        if (characterArray[characterPointer].textContent == "↩") {
+            characterArray[characterPointer].classList.add('correct');
+            characterArray[characterPointer].parentNode.parentNode.classList.remove('darkbgd1');
+            characterPointer++;
+            characterArray[characterPointer].parentNode.parentNode.classList.add('darkbgd1');
         }
-        characterArray[characterPointer].classList.add('correct')
-    // Case 2 (nonspace-char): incorrect
+    }
+    if (key == characterArray[characterPointer].textContent) {
+        characterArray[characterPointer].classList.add('correct');
+        characterPointer++;
     }
     else if (key != characterArray[characterPointer].textContent) {
-        characterArray[characterPointer].classList.add('incorrect')
+        characterArray[characterPointer].classList.add('incorrect');
+        characterPointer++;
     }
-    characterPointer++;
     return;
 }
+
+
 // Start typing
     // Event listener for the right letter
 
@@ -103,14 +113,6 @@ function letterInputEvent(e) {
 
 // Typing
     // Event listener every keydown
-        // Case 3 (spacebar at end of word): correct
-            // move onto next word (nothing happens)
-        // Case 4 (excessive spacebar): technically correct
-            // ex: def fxn(filename, start_depth=None): ---> def fxn( filename , start_depth = None ) :
-        // Case 5 (not enough spacebar): technically correct
-        // Case 6 (preemptive spacebar): incorrect
-
-    // Backspace
         // Case 1 (At start of word)
             // Case 1.1 (Previous word was incorrect)
                 // Put cursor right after most recent filled in letter (correct / incorrect / extra)
@@ -119,7 +121,14 @@ function letterInputEvent(e) {
         // Case 2 (At middle or end of work)
             // Backspace normally
 
-
+        // Case 3 (spacebar at end of word): correct
+            // move onto next word (nothing happens)
+        // Case 4 (excessive spacebar): technically correct
+            // Case 4.1 (between words)
+            // Case 4.2 (between variables and equal signs)
+                // ex: def fxn(filename, start_depth=None): ---> def fxn( filename , start_depth = None ) :
+        // Case 5 (not enough spacebar): technically correct
+        // Case 6 (preemptive spacebar): incorrect
 // spaces between words and between parentheses should not count as an error
 
 // End condition
