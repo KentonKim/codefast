@@ -94,7 +94,7 @@ body {
 }
 
 /* vscode background*/
-.darkbgd1{
+.selectedLine {
     background-color: #141414;
 }
 
@@ -113,14 +113,19 @@ body {
 /* Div Specifics */
 .word {
     color: #77777f;
-    margin: 8px;
+    margin: 0px;
 }
 
 .line {
     display: flex;
+    padding: 8px;
 }
 
 .tab {
+    white-space: pre;
+}
+
+letter {
     white-space: pre;
 }
 

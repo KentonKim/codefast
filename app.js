@@ -22,30 +22,24 @@ function displayWords(arrayOfWords, wordBoxElement) {
     let letterElement;
     let wordElement;
     let lineElement = document.createElement('div');
-    lineElement.classList.add("line", "darkbgd1");
+    lineElement.classList.add("line", "selectedLine");
 
     // For each word
     for (let i = 0; i < arrayOfWords.length; i++) {
-        wordElement = document.createElement('div');
-        wordElement.classList.add('word');
-
         if (arrayOfWords[i] == "\n") {
-            letterElement = document.createElement('letter')
-            letterElement.textContent = "↩";
-
-            wordElement.appendChild(letterElement);
-            lineElement.appendChild(wordElement);
+            letterElement.textContent += "↩";
             wordBoxElement.appendChild(lineElement);
-
             lineElement = document.createElement('div');
             lineElement.classList.add("line");
             continue;
         }
 
+        wordElement = document.createElement('div');
+        wordElement.classList.add('word');
+
         if (arrayOfWords[i] == "    ") {
             letterElement = document.createElement('letter');
             letterElement.textContent = '    ';
-            letterElement.classList.add('tab');
             wordElement.appendChild(letterElement);
         }
         else {
@@ -56,13 +50,26 @@ function displayWords(arrayOfWords, wordBoxElement) {
             }
         }
         lineElement.appendChild(wordElement);
+
+        // Create space
+        letterElement = document.createElement('letter');
+        letterElement.textContent = " ";
+        wordElement = document.createElement('div');
+        wordElement.classList.add('word');
+        wordElement.appendChild(letterElement);
+        lineElement.appendChild(wordElement);
     }
     // Last Line
     wordBoxElement.appendChild(lineElement);
 }
 
+
 const attempt = parseStringToLetters(testString);
 displayWords(attempt,wordBank);
+
+// Initialize shit
+let currentLine = document.querySelector('.line');
+let currentWord = document.querySelector('.word');
 const wordsArray = document.querySelectorAll('.word');
 const characterArray = document.querySelectorAll('letter');
 
@@ -71,39 +78,55 @@ document.addEventListener('keydown', letterInputEvent);
 function letterInputEvent(e) {
     const key = e.key;
     const regexAllowableKeys = /^(?!Shift$)[ \t\b\na-zA-Z-9!@#$%^&*\`\~\(\)\-\_\=\+\[\]\{\}\;\:\'\"\,\<\.\>\/\?\\\|]/;
+
+    function moveToNextLine() {
+        // Check if its the last line
+        if (currentLine.nextSibling == null) {
+            return;
+        }
+
+        currentLine.classList.remove('selectedLine');
+
+        // Check if you're at the beginning of a new line (you haven't written anything at new line)
+        if (currentLine.childNodes[0] == currentWord 
+            && Array.from(currentLine.childNodes[0].childNodes).every((node) =>
+                node.classList.length == 0
+            )) {
+            let newLine = document.createElement('div');
+            newLine.classList.add('line');
+            currentLine.parentNode.insertBefore(newLine,currentLine.nextSibling);
+            currentLine = currentLine.nextSibling;
+        }
+
+        currentLine = currentLine.nextSibling;
+        currentLine.classList.add('selectedLine');
+
+        currentWord = currentLine.childNodes[0];
+        return currentLine;
+    }
+
+    function moveToNextWord() {
+
+    }
+
+
     if (!regexAllowableKeys.test(key)) {
         return;
     }
-    if (key == "Tab") {
-        e.preventDefault(); // stops tab from indexing
-        return;
-    }
-    if (key == "Backspace") {
-        return;
-    }
-    if (key == " "){
-        return;
-    }
     if (key == "Enter") {
-        if (characterArray[characterPointer].textContent == "↩") {
-            characterArray[characterPointer].classList.add('correct');
-            characterArray[characterPointer].parentNode.parentNode.classList.remove('darkbgd1');
-            characterPointer++;
-            characterArray[characterPointer].parentNode.parentNode.classList.add('darkbgd1');
-        }
+        moveToNextLine();
     }
-    if (key == characterArray[characterPointer].textContent) {
-        characterArray[characterPointer].classList.add('correct');
-        characterPointer++;
-    }
-    else if (key != characterArray[characterPointer].textContent) {
-        characterArray[characterPointer].classList.add('incorrect');
-        characterPointer++;
-    }
+    // Is a 
+    // Beginning of new word
+    // Middle of word
+    // End of word
+
     return;
 }
 
+function    letter()  {
 
+}
 // Start typing
     // Event listener for the right letter
 
