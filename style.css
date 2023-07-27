@@ -111,10 +111,15 @@ body {
     margin: 8px;
 }
 
-/* Flex */
-.flexDisplay {
+.line {
     display: flex;
 }
+
+.tab {
+    white-space: pre;
+}
+
+/* Flex */
 
 .rowWrap {
     flex-flow: wrap;

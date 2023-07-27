@@ -15,51 +15,51 @@ let characterPointer = 0;
         // return string
 
 function parseStringToLetters(string) {
-    return string.match(/[^\s]+|\n/g);
+    return string.match(/[^\s]+|\n| {4}/g);
 }
 
 function displayWords(arrayOfWords, wordBoxElement) {
-
+    let letterElement;
+    let wordElement;
     let lineElement = document.createElement('div');
-    lineElement.classList.add("line","flexDisplay");
+    lineElement.classList.add("line");
 
     // For each word
     for (let i = 0; i < arrayOfWords.length; i++) {
-        let wordElement = document.createElement('div');
+        wordElement = document.createElement('div');
         wordElement.classList.add('word');
 
+        if (arrayOfWords[i] == "\n") {
+            letterElement = document.createElement('letter')
+            letterElement.textContent = "↩";
 
+            wordElement.appendChild(letterElement);
+            lineElement.appendChild(wordElement);
+            wordBoxElement.appendChild(lineElement);
+
+            lineElement = document.createElement('div');
+            lineElement.classList.add("line");
+            continue;
+        }
+
+        if (arrayOfWords[i] == "    ") {
+            wordElement.classList.add('tab');
+        }
         for (let j = 0; j < arrayOfWords[i].length; j++) {
-            let letterElement = document.createElement('letter');
+            letterElement = document.createElement('letter');
             letterElement.textContent = arrayOfWords[i][j];
             wordElement.appendChild(letterElement);
         }
-
         lineElement.appendChild(wordElement);
-
-        if (wordElement.childNodes[0].textContent == "\n"){
-            wordElement.childNodes[0].textContent = "↩";
-            wordBoxElement.appendChild(lineElement);
-            lineElement = document.createElement('div');
-            lineElement.classList.add("line","flexDisplay");
-        }
     }
     // Last Line
     wordBoxElement.appendChild(lineElement);
 }
 
 const attempt = parseStringToLetters(testString);
-console.log(attempt);
 displayWords(attempt,wordBank);
-
 const wordsArray = document.querySelectorAll('.word');
 const characterArray = document.querySelectorAll('letter');
-document.addEventListener('keydown', (e) => {
-    const key = e.key;
-    wordInput.value += key;
-    e.preventDefault();
-});
-
 
 document.addEventListener('keydown', letterInputEvent);
 
@@ -70,22 +70,28 @@ function letterInputEvent(e) {
         return;
     }
     if (key == "Backspace") {
-
-
+        console.log('backapce')
+        characterPointer--;
+        characterArray[characterPointer].classList.remove('correct', 'incorrect');
+        return;
     }
+
     // Case 1 (nonspace-char): correct
+    let delaypointer;
     if (key == characterArray[characterPointer].textContent || (key == "Enter" && characterArray[characterPointer].textContent == "↩")) {
         if (key == "Enter") {
-            characterArray[characterPointer].classList.add('hidden');
+            delaypointer = characterPointer
+            setTimeout(() => {
+                characterArray[delaypointer].classList.add('hidden');
+            }, 500);
         }
         characterArray[characterPointer].classList.add('correct')
-        characterPointer++;
     // Case 2 (nonspace-char): incorrect
     }
     else if (key != characterArray[characterPointer].textContent) {
         characterArray[characterPointer].classList.add('incorrect')
-        characterPointer++;
     }
+    characterPointer++;
     return;
 }
 // Start typing
