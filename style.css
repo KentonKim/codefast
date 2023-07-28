@@ -94,10 +94,6 @@ body {
 }
 
 /* vscode background*/
-.selectedLine {
-    background-color: #141414;
-}
-
 .darkbgd2 {
     background-color: #252526;
 }
@@ -116,6 +112,10 @@ body {
     margin: 8px;
 }
 
+.activeLine {
+    background-color: #141414;
+}
+
 .line {
     display: flex;
     padding: 8px;
@@ -129,7 +129,7 @@ letter {
     white-space: pre;
 }
 
-.active {
+.activeWord {
     border: 1px solid white;
 }
 
