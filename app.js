@@ -43,6 +43,7 @@ function displayWords(arrayOfWords, wordBoxElement) {
 
         if (arrayOfWords[i] == "    ") {
             letterElement = document.createElement('letter');
+            letterElement.classList.add('correct');
             letterElement.textContent = '    ';
             wordElement.appendChild(letterElement);
         }
@@ -57,6 +58,7 @@ function displayWords(arrayOfWords, wordBoxElement) {
     }
     // Last Line
     wordBoxElement.appendChild(lineElement);
+    // TODO TAB SHOULD BE CORRECT
 }
 
 
@@ -79,26 +81,48 @@ function letterInputEvent(e) {
     const regexAllowableKeys = /^(?!Shift$)[ \t\b\na-zA-Z-9!@#$%^&*\`\~\(\)\-\_\=\+\[\]\{\}\;\:\'\"\,\<\.\>\/\?\\\|]/;
     if (!regexAllowableKeys.test(key)) {
         return;
+    }
+
+    function determineWordCorrect() {
+        for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
+            if (currentWord.childNodes[i].classList.length == 0
+            || currentWord.childNodes[i].classList.contains('excess') 
+            || currentWord.childNodes[i].classList.contains('incorrect')) {
+                currentWord.classList.add('misspelled');
+                return -1;
+            }
+            else if (currentWord.childNodes[i].classList.contains('style')) {
+                currentWord.classList.add('partial');
+                return 0;
+            }
+        }
+        currentWord.classList = 'word';
+        return 1;
+    }
 
     function moveToNextLine() {
         if (currentLine.nextSibling == null) {
             return;
         }
-        if (currentWord.nextSibling.nextSibling == null) {
-            currentLine.classList.remove('activeLine');
-            currentWord.classList.remove('activeWord');
-            currentLine = currentLine.nextSibling;
-            currentLine.classList.add('activeLine');
-            currentWord = currentLine.childNodes[0];
-            currentWord.classList.add('activeWord');
-            return;
+        currentLine.classList.remove('activeLine');
+        currentWord.classList.remove('activeWord');
+        while (currentWord.nextSibling!= null) {
+            determineWordCorrect();
+            currentWord = currentWord.nextSibling;
         }
+        currentLine = currentLine.nextSibling;
+        currentLine.classList.add('activeLine');
+        currentWord = currentLine.childNodes[0];
+        currentWord.classList.add('activeWord');
+        currentLetter = currentWord.childNodes[0];
+        return;
     }
 
     function moveToNextWord() {
-        if (currentWord.nextSibling.nextSibling == null) {
+        if (currentWord.nextSibling.childNodes[0].textContent == "↩") {
             return;
         }
+        determineWordCorrect();
         currentWord.classList.remove('activeWord');
         currentWord = currentWord.nextSibling;
         currentWord.classList.add('activeWord');
@@ -109,28 +133,42 @@ function letterInputEvent(e) {
         if (currentWord.previousSibling == null) {
             return;
         }
-        currentWord.classList.remove('activeWord');
-        currentWord = currentWord.previousSibling;
-        currentWord.classList.add('activeWord');
+        if (currentLetter.previousSibling == null) {
+            currentWord.classList.remove('activeWord');
+            currentWord = currentWord.previousSibling;
+            currentWord.classList.add('activeWord');
+            for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
+                if (currentWord.childNodes[i].classList.length > 0) {
+                    currentLetter = currentWord.childNodes[i];
+                    break;
+                }
+            }
+            return;
+        }
         // TODO update current lletter
 
     }
 
-    }
+
     if (key == "Enter") {
         moveToNextLine();
+        return;
     }
     else if (key == " ") {
         moveToNextWord();
+        return;
     }
     else if (key == "Backspace") {
         if (currentLetter.previousSibling == null) {
-        moveToPreviousWord();
+            moveToPreviousWord();
             return;
         }
         currentLetter.classList = "";
         currentLetter = currentLetter.previousSibling;
-        currentLetter.classList = "";
+        if (currentLetter.nextSibling.classList.contains('excess')) {
+            currentLetter.nextSibling.remove();
+        }
+        return;
     }
     else if (key == currentLetter.textContent) {
         currentLetter.classList.add('correct');
