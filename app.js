@@ -22,16 +22,12 @@ function displayWords(arrayOfWords, wordBoxElement) {
     let letterElement;
     let wordElement;
     let lineElement = document.createElement('div');
-    lineElement.classList.add("line", "selectedLine");
+    lineElement.classList.add("line");
 
     // For each word
     for (let i = 0; i < arrayOfWords.length; i++) {
         wordElement = document.createElement('div');
         wordElement.classList.add('word');
-
-        if (i == 0) {
-            wordElement.classList.add("active");
-        }
 
         if (arrayOfWords[i] == "\n") {
             letterElement = document.createElement('letter');
@@ -70,8 +66,11 @@ displayWords(attempt,wordBank);
 // Initialize shit
 let currentLine = document.querySelector('.line');
 let currentWord = document.querySelector('.word');
-const wordsArray = document.querySelectorAll('.word');
-const characterArray = document.querySelectorAll('letter');
+let currentLetter = document.querySelector('letter');
+currentLine.classList.add('activeLine');
+currentWord.classList.add('activeWord');
+currentLetter.classList.add('activeLetter');
+
 
 document.addEventListener('keydown', letterInputEvent);
 
@@ -80,45 +79,49 @@ function letterInputEvent(e) {
     const regexAllowableKeys = /^(?!Shift$)[ \t\b\na-zA-Z-9!@#$%^&*\`\~\(\)\-\_\=\+\[\]\{\}\;\:\'\"\,\<\.\>\/\?\\\|]/;
 
     function moveToNextLine() {
-        // Check if its the last line
         if (currentLine.nextSibling == null) {
             return;
         }
-
-        currentLine.classList.remove('selectedLine');
-        currentWord.classList.remove('active');
-
-        // Check if you're at the beginning of a new line (you haven't written anything at new line)
-        if (currentLine.childNodes[0] == currentWord 
-            && Array.from(currentLine.childNodes[0].childNodes).every((node) =>
-                node.classList.length == 0
-            )) {
-            let newLine = document.createElement('div');
-            newLine.classList.add('line');
-            currentLine.parentNode.insertBefore(newLine,currentLine.nextSibling);
-            currentLine = currentLine.nextSibling;
-        }
-
+        currentLine.classList.remove('activeLine');
+        currentWord.classList.remove('activeWord');
         currentLine = currentLine.nextSibling;
-        currentLine.classList.add('selectedLine');
-
+        currentLine.classList.add('activeLine');
         currentWord = currentLine.childNodes[0];
-        currentWord.classList.add('active');
+        currentWord.classList.add('activeWord');
         return currentLine;
     }
 
+    function moveToPreviousLine() {
+        if (currentLine.previousSibling == null) {
+            return;
+        }
+        currentLine.classList.remove('activeLine');
+        currentLine = currentLine.previousSibling;
+        currentLine.classList.add('activeLine');
+
+        // TO CHANGE TO RIGHTMOST UNFILLED LETTER 
+        currentWord.classList.remove('activeWord');
+        currentWord = currentLine.childNodes[currentLine.childNodes.length - 1];
+        currentWord.classList.add('activeWord');
+    }
+
     function moveToNextWord() {
-        // Check if its the last word
         if (currentWord.nextSibling == null) {
             return;
         }
-        currentWord.classList.remove('active');
-        currentWord = currentWord.nextSibling
-        currentWord.classList.add('active');
+        currentWord.classList.remove('activeWord');
+        currentWord = currentWord.nextSibling;
+        currentWord.classList.add('activeWord');
     }
 
     function moveToPreviousWord() {
-
+        if (currentWord.previousSibling == null) {
+            moveToPreviousLine();
+            return;
+        }
+        currentWord.classList.remove('activeWord');
+        currentWord = currentWord.previousSibling;
+        currentWord.classList.add('activeWord');
     }
 
 
@@ -131,6 +134,9 @@ function letterInputEvent(e) {
     }
     if (key == " ") {
         moveToNextWord();
+    }
+    if (key == "Backspace") {
+        moveToPreviousWord();
     }
     // Is a 
     // Beginning of new word
