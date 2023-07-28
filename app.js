@@ -77,6 +77,8 @@ document.addEventListener('keydown', letterInputEvent);
 function letterInputEvent(e) {
     const key = e.key;
     const regexAllowableKeys = /^(?!Shift$)[ \t\b\na-zA-Z-9!@#$%^&*\`\~\(\)\-\_\=\+\[\]\{\}\;\:\'\"\,\<\.\>\/\?\\\|]/;
+    if (!regexAllowableKeys.test(key)) {
+        return;
 
     function moveToNextLine() {
         if (currentLine.nextSibling == null) {
@@ -93,20 +95,6 @@ function letterInputEvent(e) {
         }
     }
 
-    function moveToPreviousLine() {
-        if (currentLine.previousSibling == null) {
-            return;
-        }
-        currentLine.classList.remove('activeLine');
-        currentLine = currentLine.previousSibling;
-        currentLine.classList.add('activeLine');
-
-        // TO CHANGE TO RIGHTMOST UNFILLED LETTER 
-        currentWord.classList.remove('activeWord');
-        currentWord = currentLine.childNodes[currentLine.childNodes.length - 2];
-        currentWord.classList.add('activeWord');
-    }
-
     function moveToNextWord() {
         if (currentWord.nextSibling.nextSibling == null) {
             return;
@@ -119,7 +107,6 @@ function letterInputEvent(e) {
 
     function moveToPreviousWord() {
         if (currentWord.previousSibling == null) {
-            moveToPreviousLine();
             return;
         }
         currentWord.classList.remove('activeWord');
@@ -129,8 +116,6 @@ function letterInputEvent(e) {
 
     }
 
-    if (!regexAllowableKeys.test(key)) {
-        return;
     }
     if (key == "Enter") {
         moveToNextLine();
@@ -140,7 +125,7 @@ function letterInputEvent(e) {
     }
     else if (key == "Backspace") {
         if (currentLetter.previousSibling == null) {
-            moveToPreviousWord();
+        moveToPreviousWord();
             return;
         }
         currentLetter.classList = "";
@@ -153,8 +138,6 @@ function letterInputEvent(e) {
             currentLetter = currentLetter.nextSibling;
         }
     }
-
-
     // Is a 
     // Beginning of new word
     // Middle of word
