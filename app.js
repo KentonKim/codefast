@@ -82,13 +82,15 @@ function letterInputEvent(e) {
         if (currentLine.nextSibling == null) {
             return;
         }
-        currentLine.classList.remove('activeLine');
-        currentWord.classList.remove('activeWord');
-        currentLine = currentLine.nextSibling;
-        currentLine.classList.add('activeLine');
-        currentWord = currentLine.childNodes[0];
-        currentWord.classList.add('activeWord');
-        return currentLine;
+        if (currentWord.nextSibling.nextSibling == null) {
+            currentLine.classList.remove('activeLine');
+            currentWord.classList.remove('activeWord');
+            currentLine = currentLine.nextSibling;
+            currentLine.classList.add('activeLine');
+            currentWord = currentLine.childNodes[0];
+            currentWord.classList.add('activeWord');
+            return;
+        }
     }
 
     function moveToPreviousLine() {
@@ -101,12 +103,12 @@ function letterInputEvent(e) {
 
         // TO CHANGE TO RIGHTMOST UNFILLED LETTER 
         currentWord.classList.remove('activeWord');
-        currentWord = currentLine.childNodes[currentLine.childNodes.length - 1];
+        currentWord = currentLine.childNodes[currentLine.childNodes.length - 2];
         currentWord.classList.add('activeWord');
     }
 
     function moveToNextWord() {
-        if (currentWord.nextSibling == null) {
+        if (currentWord.nextSibling.nextSibling == null) {
             return;
         }
         currentWord.classList.remove('activeWord');
@@ -124,11 +126,9 @@ function letterInputEvent(e) {
         currentWord.classList.add('activeWord');
     }
 
-
     if (!regexAllowableKeys.test(key)) {
         return;
     }
-    console.log(key);
     if (key == "Enter") {
         moveToNextLine();
     }
