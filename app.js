@@ -115,7 +115,6 @@ function letterInputEvent(e) {
         currentWord.classList.remove('active');
         currentWord = currentWord.nextSibling
         currentWord.classList.add('active');
-
     }
 
     function moveToPreviousWord() {
@@ -126,8 +125,12 @@ function letterInputEvent(e) {
     if (!regexAllowableKeys.test(key)) {
         return;
     }
+    console.log(key);
     if (key == "Enter") {
         moveToNextLine();
+    }
+    if (key == " ") {
+        moveToNextWord();
     }
     // Is a 
     // Beginning of new word
