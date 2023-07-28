@@ -28,6 +28,16 @@ body {
     visibility: hidden;
 }
 
+/* Flex */
+
+.rowWrap {
+    flex-flow: wrap;
+}
+
+.lineBreak {
+    flex-grow: 1;
+}
+
 /* Position Classes */
 .relative {
     position: relative;
@@ -106,41 +116,35 @@ body {
     background-color: #3e3e42;
 }
 
-/* Div Specifics */
-.word {
-    color: #77777f;
-    margin: 8px;
-}
-
-.activeLine {
-    background-color: #141414;
-}
-
+/* Word Bank */
 .line {
     display: flex;
     padding: 8px;
 }
 
-.tab {
-    white-space: pre;
+.word {
+    color: #77777f;
+    margin: 8px;
 }
 
 letter {
     white-space: pre;
 }
 
+.activeLine {
+    background-color: #141414;
+}
+
 .activeWord {
     border: 1px solid white;
 }
 
-/* Flex */
-
-.rowWrap {
-    flex-flow: wrap;
+.misspelled {
+    text-decoration: underline solid red;
 }
 
-.lineBreak {
-    flex-grow: 1;
+.partial {
+    text-decoration: underline solid yellow;
 }
 
 /* Letter Specific */
@@ -152,6 +156,10 @@ letter {
     color: red;
 }
 
-.styleIncorrect {
+.style {
     color: orange;
+}
+
+.excess {
+    color: darkred;
 }
