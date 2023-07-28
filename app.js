@@ -114,6 +114,7 @@ function letterInputEvent(e) {
         currentWord.classList.remove('activeWord');
         currentWord = currentWord.nextSibling;
         currentWord.classList.add('activeWord');
+        currentLetter = currentWord.childNodes[0];
     }
 
     function moveToPreviousWord() {
@@ -124,6 +125,8 @@ function letterInputEvent(e) {
         currentWord.classList.remove('activeWord');
         currentWord = currentWord.previousSibling;
         currentWord.classList.add('activeWord');
+        // TODO update current lletter
+
     }
 
     if (!regexAllowableKeys.test(key)) {
@@ -132,12 +135,26 @@ function letterInputEvent(e) {
     if (key == "Enter") {
         moveToNextLine();
     }
-    if (key == " ") {
+    else if (key == " ") {
         moveToNextWord();
     }
-    if (key == "Backspace") {
-        moveToPreviousWord();
+    else if (key == "Backspace") {
+        if (currentLetter.previousSibling == null) {
+            moveToPreviousWord();
+            return;
+        }
+        currentLetter.classList = "";
+        currentLetter = currentLetter.previousSibling;
+        currentLetter.classList = "";
     }
+    else if (key == currentLetter.textContent) {
+        currentLetter.classList.add('correct');
+        if (currentLetter.nextSibling != null) {
+            currentLetter = currentLetter.nextSibling;
+        }
+    }
+
+
     // Is a 
     // Beginning of new word
     // Middle of word
