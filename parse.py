@@ -2,73 +2,84 @@ import pathlib
 from os import path
 import ast
 import random
-from xxlimited import Str
+import glob
+
+#   EXAMPLE USAGES   #
+
+#pgen = PythonCodeGenerator()
+#print(pgen.get_random_randomized_python_string())
 
 standard_lib = dir(__builtins__)
-
 cwd = pathlib.Path(__file__).parent.resolve()
 
-#read filestr from file path
-code = "Python/ast_test.py"
-with open(path.join(cwd, code), "r") as f:
-    filestr = f.read()
+class PythonCodeGenerator():
+    class MyVisitor(ast.NodeVisitor):
+            def get_set_random(self, identifier:str):
+                if identifier in self.get_set:
+                    return self.get_set[identifier]
+                else:
+                    word = random.choice(list(self.words))
+                    if identifier.isupper():
+                        self.get_set[identifier] = word.upper()
+                    elif identifier[0].isupper():
+                        self.get_set[identifier] = word[0].upper() + word[1:]
+                    else:
+                        self.get_set[identifier] = word
 
-#list of 1000 most common english words
-with open(path.join(cwd, 'words.txt')) as f:
-    words = set(f.read().split("\n"))
+                    return identifier
 
-class MyVisitor(ast.NodeVisitor):
-    def get_set_random(self, identifier:str):
-        if identifier in self.get_set:
-            return self.get_set[identifier]
-        else:
-            word = random.choice(list(words))
-            words.remove(word)
-            assert words
-            if identifier.isupper():
-                self.get_set[identifier] = word.upper()
-            elif identifier[0].isupper():
-                self.get_set[identifier] = word[0].upper() + word[1:]
-            else:
-                self.get_set[identifier] = word
+            def visit_Module(self, node):
+                self.get_set = {}
+                self.words = PythonCodeGenerator.words
+                self.generic_visit(node)
+                self.generic_visit(node)
+            def visit_Name(self, node):
+                if node.id not in standard_lib:
+                    node.id = self.get_set_random(node.id)
+            def visit_ClassDef(self, node):
+                if node.name not in standard_lib:
+                    node.name = self.get_set_random(node.name)
+                self.generic_visit(node)
+            def visit_Attribute(self, node):
+                if node.attr not in standard_lib:
+                    node.attr = self.get_set_random(node.attr)
+                self.generic_visit(node)
+            def visit_FunctionDef(self, node):
+                if node.name not in standard_lib:
+                    node.name = self.get_set_random(node.name)
+                for arg in node.args.args:
+                    if arg.arg not in standard_lib:
+                        arg.arg = self.get_set_random(arg.arg)
+                self.generic_visit(node)
+            
+    with open(path.join(cwd, 'words.txt')) as f:
+        words = set(f.read().split("\n"))
 
-            return identifier
+    def get_python_string(self):
+        random_file = random.choice(list(glob.iglob(path.join(cwd, "Python/*.py"))))
+        with open(random_file, "r") as f:
+            return f.read()
+    
+    def randomize_python_string(self, s):
+        def filter_comments(node):
+            return not isinstance(node, ast.Expr) or not isinstance(node.value, ast.Str)
 
-    def visit_Module(self, node):
-        self.get_set = {}
-        self.generic_visit(node)
-        self.generic_visit(node)
-    def visit_Name(self, node):
-        if node.id not in standard_lib:
-            node.id = self.get_set_random(node.id)
-    def visit_ClassDef(self, node):
-        if node.name not in standard_lib:
-            node.name = self.get_set_random(node.name)
-        self.generic_visit(node)
-    def visit_FunctionDef(self, node):
-        if node.name not in standard_lib:
-           node.name = self.get_set_random(node.name)
-        for arg in node.args.args:
-            if arg.arg not in standard_lib:
-                arg.arg = self.get_set_random(arg.arg)
-        self.generic_visit(node)
+        tree = ast.parse(s)
 
-def filter_comments(node):
-    return not isinstance(node, ast.Expr) or not isinstance(node.value, ast.Str)
+        visitor = self.MyVisitor()
+        visitor.visit(tree)
 
-tree = ast.parse(filestr)
+        tree.body = list(filter(filter_comments, tree.body))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                node.body = list(filter(filter_comments, node.body))
 
-visitor = MyVisitor()
-visitor.visit(tree)
+        out = ast.unparse(tree)
+        return out
+    
+    def get_random_randomized_python_string(self):
+        return self.randomize_python_string(self.get_python_string())
 
-# Remove Comments!!!
-tree.body = list(filter(filter_comments, tree.body))
-for node in ast.walk(tree):
-    if isinstance(node, ast.FunctionDef):
-        node.body = list(filter(filter_comments, node.body))
-
-out = ast.unparse(tree)
-print(out)
-
-
-
+    def get_randomized_python_string(self, p):
+        with open(path.join(cwd, p), "r") as f:
+            return self.randomize_python_string(f.read())
