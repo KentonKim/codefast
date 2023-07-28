@@ -3,6 +3,7 @@ from os import path
 import ast
 import random
 import glob
+import argparse
 
 #   EXAMPLE USAGES   #
 
@@ -83,3 +84,16 @@ class PythonCodeGenerator():
     def get_randomized_python_string(self, p):
         with open(path.join(cwd, p), "r") as f:
             return self.randomize_python_string(f.read())
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="A simple script to read a file path.")
+
+    parser.add_argument("--file", help="Path to the file you want to process.")
+
+    args = parser.parse_args()
+
+    pgen = PythonCodeGenerator()
+    if args.file:
+        print(pgen.get_randomized_python_string(args.file))
+    else:
+        print(pgen.get_random_randomized_python_string())
