@@ -120,6 +120,7 @@ function letterInputEvent(e) {
 
     function moveToNextWord() {
         if (currentWord.nextSibling.childNodes[0].textContent == "↩") {
+            addExcessLetter();
             return;
         }
         determineWordCorrect();
@@ -133,22 +134,18 @@ function letterInputEvent(e) {
         if (currentWord.previousSibling == null) {
             return;
         }
-        if (currentLetter.previousSibling == null) {
-            currentWord.classList.remove('activeWord');
-            currentWord = currentWord.previousSibling;
-            currentWord.classList.add('activeWord');
-            for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
-                if (currentWord.childNodes[i].classList.length > 0) {
-                    currentLetter = currentWord.childNodes[i];
-                    break;
-                }
+        currentWord.classList.remove('activeWord');
+        currentWord = currentWord.previousSibling;
+        currentWord.classList.add('activeWord');
+        for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
+            if (currentWord.childNodes[i].classList.length > 0) {
+                currentLetter = currentWord.childNodes[i];
+                return;
             }
-            return;
         }
-        // TODO update current lletter
-
+        currentLetter = currentWord.childNodes[0];
+        return;
     }
-
 
     if (key == "Enter") {
         moveToNextLine();
@@ -159,27 +156,43 @@ function letterInputEvent(e) {
         return;
     }
     else if (key == "Backspace") {
+        if (currentLetter.classList.length != 0) {
+            currentLetter.classList = "";
+            return;
+        }
         if (currentLetter.previousSibling == null) {
             moveToPreviousWord();
             return;
-        }
-        currentLetter.classList = "";
+        }  
         currentLetter = currentLetter.previousSibling;
         if (currentLetter.nextSibling.classList.contains('excess')) {
             currentLetter.nextSibling.remove();
         }
         return;
     }
-    else if (key == currentLetter.textContent) {
-        currentLetter.classList.add('correct');
-        if (currentLetter.nextSibling != null) {
-            currentLetter = currentLetter.nextSibling;
+
+    else { // TODO TODO TODO TODO TODO
+        // CHECK IF 
+
+
+
+
+        // current letter is unfilled
+        if (currentLetter.classList.length != 0) {
+            if (key == currentLetter.textContent) {
+                currentLetter.classList.add('correct');
+            }
+            else {
+                currentLetter.classList.remove('correct');
+            }
+        }
+        // current letter is filled
+        else {
+            // check if last letter
+            // move to next letter and check if correct or not
+
         }
     }
-    // Is a 
-    // Beginning of new word
-    // Middle of word
-    // End of word
 
     return;
 }
