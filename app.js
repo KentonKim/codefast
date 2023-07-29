@@ -71,8 +71,6 @@ let currentWord = document.querySelector('.word');
 let currentLetter = document.querySelector('letter');
 currentLine.classList.add('activeLine');
 currentWord.classList.add('activeWord');
-currentLetter.classList.add('activeLetter');
-
 
 document.addEventListener('keydown', letterInputEvent);
 
@@ -82,6 +80,7 @@ function letterInputEvent(e) {
     if (!regexAllowableKeys.test(key)) {
         return;
     }
+    console.log(currentLetter.textContent);
 
     function determineWordCorrect() {
         for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
@@ -155,51 +154,48 @@ function letterInputEvent(e) {
         moveToNextWord();
         return;
     }
+
     else if (key == "Backspace") {
         if (currentLetter.classList.length != 0) {
-            currentLetter.classList = "";
+            if (currentLetter.classList.contains('excess')) {
+                currentLetter = currentLetter.previousSibling;
+                currentLetter.nextSibling.remove();
+                return;
+            }
+            currentLetter.classList = '';
             return;
         }
         if (currentLetter.previousSibling == null) {
             moveToPreviousWord();
             return;
-        }  
-        currentLetter = currentLetter.previousSibling;
-        if (currentLetter.nextSibling.classList.contains('excess')) {
-            currentLetter.nextSibling.remove();
         }
+        currentLetter = currentLetter.previousSibling;
+        currentLetter.classList = '';
         return;
     }
 
-    else { // TODO TODO TODO TODO TODO
-        // CHECK IF 
-
-
-
-
-        // current letter is unfilled
+    else { 
         if (currentLetter.classList.length != 0) {
-            if (key == currentLetter.textContent) {
-                currentLetter.classList.add('correct');
+            if (currentLetter.nextSibling == null) {
+                let newletter = document.createElement('letter');
+                newletter.classList.add('excess');
+                newletter.textContent = key;
+                currentWord.appendChild(newletter);
+                currentLetter = currentLetter.nextSibling;
+                return;
             }
-            else {
-                currentLetter.classList.remove('correct');
-            }
+            currentLetter = currentLetter.nextSibling;
         }
-        // current letter is filled
+        if (key == currentLetter.textContent) {
+            currentLetter.classList.add('correct');
+        }
         else {
-            // check if last letter
-            // move to next letter and check if correct or not
-
+            currentLetter.classList.add('incorrect');
         }
     }
-
     return;
 }
 
-function    letter()  {
-
-}
 // Start typing
     // Event listener for the right letter
 
