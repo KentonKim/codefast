@@ -139,14 +139,13 @@ letter {
     border: 1px solid white;
 }
 
-.misspelled {
-    text-decoration: underline solid red;
-}
-
 .partial {
     text-decoration: underline solid yellow;
 }
 
+.misspelled {
+    text-decoration: underline solid red;
+}
 /* Letter Specific */
 .correct {
     color: #c8c8c8;

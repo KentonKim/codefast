@@ -139,7 +139,7 @@ function letterInputEvent(e) {
             && !currentWord.previousSibling.classList.contains('partial'))) {
             return;
         }
-        currentWord.classList.remove('activeWord');
+        currentWord.classList = 'word';
         currentWord = currentWord.previousSibling;
         currentWord.classList.add('activeWord');
         for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
@@ -157,13 +157,24 @@ function letterInputEvent(e) {
         return;
     }
     else if (key == " ") {
-        moveToNextWord();
+        if (currentLetter.nextSibling == null) {
+            moveToNextWord();
+        }
+        else if ((currentLetter.previousSibling == null 
+            || currentLetter.previousSibling.classList.contains('style')) 
+            && currentLetter.classList.length == 0) {
+            let newletter = document.createElement('letter');
+            newletter.classList.add('style');
+            newletter.textContent = " ";
+            currentWord.insertBefore(newletter, currentLetter);
+        }
         return;
     }
 
     else if (key == "Backspace") {
         if (currentLetter.classList.length != 0) {
-            if (currentLetter.classList.contains('excess')) {
+            if (currentLetter.classList.contains('excess')
+            || currentLetter.classList.contains('style')) {
                 currentLetter = currentLetter.previousSibling;
                 currentLetter.nextSibling.remove();
                 return;
@@ -173,6 +184,10 @@ function letterInputEvent(e) {
         }
         if (currentLetter.previousSibling == null) {
             moveToPreviousWord();
+            return;
+        }
+        if (currentLetter.previousSibling.classList.contains('style')) {
+            currentLetter.previousSibling.remove();
             return;
         }
         currentLetter = currentLetter.previousSibling;
