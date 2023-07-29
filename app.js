@@ -84,6 +84,7 @@ function letterInputEvent(e) {
     console.log(currentLetter.textContent);
 
     function determineWordCorrect() {
+        currentWord.classList = 'word';
         for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
             if (currentWord.childNodes[i].classList.length == 0
             || currentWord.childNodes[i].classList.contains('excess') 
@@ -96,7 +97,6 @@ function letterInputEvent(e) {
                 return 0;
             }
         }
-        currentWord.classList = 'word';
         return 1;
     }
 
@@ -157,17 +157,16 @@ function letterInputEvent(e) {
         return;
     }
     else if (key == " ") {
-        if (currentLetter.nextSibling == null) {
-            moveToNextWord();
-        }
-        else if ((currentLetter.previousSibling == null 
+        if ((currentLetter.previousSibling == null 
             || currentLetter.previousSibling.classList.contains('style')) 
             && currentLetter.classList.length == 0) {
             let newletter = document.createElement('letter');
             newletter.classList.add('style');
             newletter.textContent = " ";
             currentWord.insertBefore(newletter, currentLetter);
+            return;
         }
+        moveToNextWord();
         return;
     }
 
