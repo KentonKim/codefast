@@ -46,6 +46,7 @@ function displayWords(arrayOfWords, wordBoxElement) {
             letterElement.classList.add('correct');
             letterElement.textContent = '    ';
             wordElement.appendChild(letterElement);
+            wordElement.classList = 'tab';
         }
         else {
             for (let j = 0; j < arrayOfWords[i].length; j++) {
@@ -76,7 +77,7 @@ document.addEventListener('keydown', letterInputEvent);
 
 function letterInputEvent(e) {
     const key = e.key;
-    const regexAllowableKeys = /^(?!Shift$)[ \t\b\na-zA-Z-9!@#$%^&*\`\~\(\)\-\_\=\+\[\]\{\}\;\:\'\"\,\<\.\>\/\?\\\|]/;
+    const regexAllowableKeys = /^(?!Shift$)^(?!Tab$)[ \b\na-zA-Z-9!@#$%^&*\`\~\(\)\-\_\=\+\[\]\{\}\;\:\'\"\,\<\.\>\/\?\\\|]/;
     if (!regexAllowableKeys.test(key)) {
         return;
     }
@@ -112,6 +113,9 @@ function letterInputEvent(e) {
         currentLine = currentLine.nextSibling;
         currentLine.classList.add('activeLine');
         currentWord = currentLine.childNodes[0];
+        while (currentWord.childNodes[0].textContent == "    ") {
+            currentWord = currentWord.nextSibling;
+        }
         currentWord.classList.add('activeWord');
         currentLetter = currentWord.childNodes[0];
         return;
@@ -130,7 +134,9 @@ function letterInputEvent(e) {
     }
 
     function moveToPreviousWord() {
-        if (currentWord.previousSibling == null) {
+        if (currentWord.previousSibling == null 
+            || (!currentWord.previousSibling.classList.contains('misspelled') 
+            && !currentWord.previousSibling.classList.contains('partial'))) {
             return;
         }
         currentWord.classList.remove('activeWord');
