@@ -101,19 +101,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A simple script to read a file path.")
 
     parser.add_argument("--file", help="Path to the file you want to process.")
-    parser.add_argument("--save-many", action="store_true", help="Path to the file you want to process.")
 
     args = parser.parse_args()
 
     pgen = PythonCodeGenerator()
     if args.file:
         print(pgen.get_randomized_python_string(args.file))
-    if args.save_many:
-        for i in range(0, 1000):
-            print(i)
-            p = path.join(cwd, "RandomCache", str(i) + ".py")
-            with open(p, "w") as f:
-                f.write(pgen.get_random_randomized_python_string())
     else:
         correct = False
         while not correct:
