@@ -5,6 +5,8 @@ import random
 import glob
 import argparse
 
+import keyword
+
 #   EXAMPLE USAGES   #
 
 #pgen = PythonCodeGenerator()
@@ -54,12 +56,22 @@ class PythonCodeGenerator():
                 self.generic_visit(node)
             
     with open(path.join(cwd, 'words.txt')) as f:
-        words = set(f.read().split("\n")) - set(standard_lib)
+        words = set(f.read().split("\n")) - set(standard_lib) - set(keyword.kwlist)
 
     def get_python_string(self):
         random_file = random.choice(list(glob.iglob(path.join(cwd, "Python/*.py"))))
         with open(random_file, "r") as f:
             return f.read()
+    
+    def test_correctness(self, s):
+        try:
+            tree = ast.parse(s)
+            bytecode = compile(tree, filename="<string>", mode="exec")
+            exec(bytecode)
+            return True
+        except Exception as e:
+            print(e)
+            return False
     
     def randomize_python_string(self, s):
         def filter_comments(node):
@@ -89,20 +101,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A simple script to read a file path.")
 
     parser.add_argument("--file", help="Path to the file you want to process.")
-    parser.add_argument("--save-many", action="store_true", help="Path to the file you want to process.")
 
     args = parser.parse_args()
 
     pgen = PythonCodeGenerator()
     if args.file:
         print(pgen.get_randomized_python_string(args.file))
-    if args.save_many:
-        for i in range(0, 1000):
-            print(i)
-            p = path.join(cwd, "RandomCache", str(i) + ".py")
-            with open(p, "w") as f:
-                f.write(pgen.get_random_randomized_python_string())
     else:
-        print(pgen.get_random_randomized_python_string())
+        correct = False
+        while not correct:
+            s = pgen.get_random_randomized_python_string()
+            print(s)
+            correct = pgen.test_correctness(s)
 
     

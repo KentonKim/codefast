@@ -59,7 +59,6 @@ function displayWords(arrayOfWords, wordBoxElement) {
     }
     // Last Line
     wordBoxElement.appendChild(lineElement);
-    // TODO TAB SHOULD BE CORRECT
 }
 
 
@@ -84,6 +83,7 @@ function letterInputEvent(e) {
     console.log(currentLetter.textContent);
 
     function determineWordCorrect() {
+        currentWord.classList = 'word';
         for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
             if (currentWord.childNodes[i].classList.length == 0
             || currentWord.childNodes[i].classList.contains('excess') 
@@ -96,7 +96,6 @@ function letterInputEvent(e) {
                 return 0;
             }
         }
-        currentWord.classList = 'word';
         return 1;
     }
 
@@ -139,7 +138,7 @@ function letterInputEvent(e) {
             && !currentWord.previousSibling.classList.contains('partial'))) {
             return;
         }
-        currentWord.classList.remove('activeWord');
+        currentWord.classList = 'word';
         currentWord = currentWord.previousSibling;
         currentWord.classList.add('activeWord');
         for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
@@ -157,13 +156,23 @@ function letterInputEvent(e) {
         return;
     }
     else if (key == " ") {
+        if ((currentLetter.previousSibling == null 
+            || currentLetter.previousSibling.classList.contains('style')) 
+            && currentLetter.classList.length == 0) {
+            let newletter = document.createElement('letter');
+            newletter.classList.add('style');
+            newletter.textContent = " ";
+            currentWord.insertBefore(newletter, currentLetter);
+            return;
+        }
         moveToNextWord();
         return;
     }
 
     else if (key == "Backspace") {
         if (currentLetter.classList.length != 0) {
-            if (currentLetter.classList.contains('excess')) {
+            if (currentLetter.classList.contains('excess')
+            || currentLetter.classList.contains('style')) {
                 currentLetter = currentLetter.previousSibling;
                 currentLetter.nextSibling.remove();
                 return;
@@ -173,6 +182,10 @@ function letterInputEvent(e) {
         }
         if (currentLetter.previousSibling == null) {
             moveToPreviousWord();
+            return;
+        }
+        if (currentLetter.previousSibling.classList.contains('style')) {
+            currentLetter.previousSibling.remove();
             return;
         }
         currentLetter = currentLetter.previousSibling;
