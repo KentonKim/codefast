@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Local API Call</title>
+</head>
+<body>
+    <h1>Local API Call Example</h1>
+    <button onclick="getData()">Get Data</button>
+    <div id="response"></div>
+
+    <script>
+        function getData() {
+            fetch('http://127.0.0.1:5000/api/python')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    document.getElementById('response').innerHTML = data;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+</html>

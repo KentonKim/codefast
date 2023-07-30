@@ -1,0 +1,15 @@
+1. install some python stuff
+
+pip install flask
+pip install flask-cors
+
+2. launch server
+
+python server.py
+
+3. launch client in localhost (must be done for annoying CORS security thing)
+
+python -m http.server
+open chrome, go to http://localhost:8000/api_test.html
+press the 'get data' button and observe if generated python code appears on the page
+
