@@ -1,5 +1,6 @@
 const wordBank = document.getElementById('words');
 const wordInput = document.getElementById('wordsInput');
+const testDiv = document.getElementById('testing');
 let characterPointer = 0;
 const testString = `class Solution: def twoSum(self, nums: List[int], target: int) -> List[int]:
     d = {}
@@ -13,6 +14,10 @@ const testString = `class Solution: def twoSum(self, nums: List[int], target: in
         // get passage of code to be typed out
         // make into a string
         // return string
+
+testDiv.classList.add('word');
+testDiv.textContent = testString;
+hljs.highlightElement(testDiv);
 
 function parseStringToLetters(string) {
     return string.match(/[^\s]+|\n| {4}/g);
