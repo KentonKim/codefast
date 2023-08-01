@@ -17,7 +17,6 @@ const testString = `class Solution: def twoSum(self, nums: List[int], target: in
 
 testDiv.classList.add('word');
 testDiv.textContent = testString;
-hljs.highlightElement(testDiv);
 
 function parseStringToLetters(string) {
     return string.match(/[^\s]+|\n| {4}/g);
