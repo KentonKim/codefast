@@ -1,6 +1,7 @@
 const wordBank = document.getElementById('words');
 const wordInput = document.getElementById('wordsInput');
 let characterPointer = 0;
+let currentLanguage = "python";
 let inputString = `class Solution: def twoSum(self, nums: List[int], target: int) -> List[int]:
     d = {}
     for index, value in enumerate(nums):
@@ -8,9 +9,29 @@ let inputString = `class Solution: def twoSum(self, nums: List[int], target: int
             return [d[target-value], index]
         d[value] = index`;
 
-let testing = document.createElement('div');
-testing.textContent = inputString;
+const testdiv = document.createElement('div');
+testdiv.textContent = inputString;
+testdiv.classList.add('language-python')
+hljs.highlightElement(testdiv);
+document.querySelector('main').appendChild(testdiv);
 
+
+function createHighlightedElement(string, language) {
+    function returnBaseObject(arrayOfObjects, parentClass) {
+        let array = [];
+        for (object of arrayOfObjects) {
+            if (typeof(object) == "string") {
+                array.push({object, parentClass});
+            }
+            else {
+                array.push(...returnBaseObject(object.children, object.scope));
+            }
+        }
+        return array;
+    }
+    const rawArray = hljs.highlight(string, {language: language})._emitter.rootNode.children;
+    return returnBaseObject(rawArray, "");
+}
 
 
 
