@@ -351,12 +351,13 @@ template {
 /* End of Normalize.css*/
 
 
-* {
+:root {
     box-sizing: border-box;
     /* border: 1px solid green; */
     font-family: 'Open Sans', Verdana, Arial, sans-serif; 
     font-size: 30px;
     tabindex: -1;
+    line-height: calc(1ex / 0.32);
 }
 
 html {
@@ -369,6 +370,59 @@ body {
     margin: 0;
 }
 
+#wordsWrap {
+    border: solid 1px white;
+    width: clamp(45ch, 80%, 80ch);
+}
+
+/* Word Bank */
+.line {
+    display: flex;
+    flex-flow: wrap;
+}
+
+.word {
+    color: #77777f;
+    margin: 0.3rem;
+}
+
+letter {
+    white-space: pre;
+}
+
+.activeLine {
+    background-color: #141414;
+}
+
+.activeWord {
+    border: 1px solid white;
+}
+
+.partial {
+    text-decoration: underline solid yellow;
+}
+
+.misspelled {
+    text-decoration: underline solid red;
+}
+
+/* Letter Specific */
+.correct {
+    color: #c8c8c8;
+}
+
+.style {
+    color: orange;
+}
+.incorrect {
+    color: red;
+}
+
+.excess {
+    color: darkred;
+}
+
+/* Attributes */
 .h-full {
     height: 100%;
 }
@@ -382,13 +436,18 @@ body {
 }
 
 /* Flex */
-
-.rowWrap {
-    flex-flow: wrap;
+.flexr {
+  display: flex;
+  flex-flow: wrap;
 }
 
-.lineBreak {
-    flex-grow: 1;
+.flexc {
+  flex-flow: column;
+}
+
+.flexcenter {
+  align-items: center;
+  justify-content: center;
 }
 
 /* Position Classes */
@@ -412,15 +471,6 @@ body {
 
 .z2 {
     z-index: 2;
-}
-
-/* ID specific */
-#typing__box {
-    margin-top: -1px;
-}
-
-#wordsWrap {
-    border: solid 1px white;
 }
 
 /* Text Colors */
@@ -467,51 +517,6 @@ body {
 
 .darkbgd4 {
     background-color: #3e3e42;
-}
-
-/* Word Bank */
-.line {
-    display: flex;
-}
-
-.word {
-    color: #77777f;
-    margin: 0.3rem;
-}
-
-letter {
-    white-space: pre;
-}
-
-.activeLine {
-    background-color: #141414;
-}
-
-.activeWord {
-    border: 1px solid white;
-}
-
-.partial {
-    text-decoration: underline solid yellow;
-}
-
-.misspelled {
-    text-decoration: underline solid red;
-}
-/* Letter Specific */
-.correct {
-    color: #c8c8c8;
-}
-
-.style {
-    color: orange;
-}
-.incorrect {
-    color: red;
-}
-
-.excess {
-    color: darkred;
 }
 
 /* Atom One Dark */
