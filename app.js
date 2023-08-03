@@ -101,150 +101,149 @@ function createWordBoxDOM(objects, lineHolder) {
 
 function letterInputEvent(e) {
     const key = e.key;
-    const regexAllowableKeys = /^(?!Shift$)^(?!Tab$)[ \b\na-zA-Z-9!@#$%^&*\`\~\(\)\-\_\=\+\[\]\{\}\;\:\'\"\,\<\.\>\/\?\\\|]/;
+    const regexAllowableKeys = /^(?!(?:Shift|Tab|CapsLock|Meta|Alt|F[1-9]|F1[0-2]|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|Control|Ctrl|Alt|Option|Cmd|Command)\b)[ -~\b\r\n]+$/;
     if (!regexAllowableKeys.test(key)) {
         return;
     }
-    console.log(currentLetter.textContent);
 
-    function determineWordCorrect() {
-        currentWord.classList = 'word';
-        for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
-            if (currentWord.childNodes[i].classList.length == 0
-            || currentWord.childNodes[i].classList.contains('excess') 
-            || currentWord.childNodes[i].classList.contains('incorrect')) {
-                currentWord.classList.add('misspelled');
-                return -1;
-            }
-            else if (currentWord.childNodes[i].classList.contains('style')) {
-                currentWord.classList.add('partial');
-                return 0;
-            }
-        }
-        return 1;
-    }
+//     function determineWordCorrect() {
+//         currentWord.classList = 'word';
+//         for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
+//             if (currentWord.childNodes[i].classList.length == 0
+//             || currentWord.childNodes[i].classList.contains('excess') 
+//             || currentWord.childNodes[i].classList.contains('incorrect')) {
+//                 currentWord.classList.add('misspelled');
+//                 return -1;
+//             }
+//             else if (currentWord.childNodes[i].classList.contains('style')) {
+//                 currentWord.classList.add('partial');
+//                 return 0;
+//             }
+//         }
+//         return 1;
+//     }
 
-    function moveToNextLine() {
-        if (currentLine.nextSibling == null) {
-            return;
-        }
-        currentLine.classList.remove('activeLine');
-        currentWord.classList.remove('activeWord');
-        while (currentWord.nextSibling!= null) {
-            determineWordCorrect();
-            currentWord = currentWord.nextSibling;
-        }
-        currentLine = currentLine.nextSibling;
-        currentLine.classList.add('activeLine');
-        currentWord = currentLine.childNodes[0];
-        while (currentWord.childNodes[0].textContent == "    ") {
-            currentWord = currentWord.nextSibling;
-        }
-        currentWord.classList.add('activeWord');
-        currentLetter = currentWord.childNodes[0];
-        return;
-    }
+//     function moveToNextLine() {
+//         if (currentLine.nextSibling == null) {
+//             return;
+//         }
+//         currentLine.classList.remove('activeLine');
+//         currentWord.classList.remove('activeWord');
+//         while (currentWord.nextSibling!= null) {
+//             determineWordCorrect();
+//             currentWord = currentWord.nextSibling;
+//         }
+//         currentLine = currentLine.nextSibling;
+//         currentLine.classList.add('activeLine');
+//         currentWord = currentLine.childNodes[0];
+//         while (currentWord.childNodes[0].textContent == "    ") {
+//             currentWord = currentWord.nextSibling;
+//         }
+//         currentWord.classList.add('activeWord');
+//         currentLetter = currentWord.childNodes[0];
+//         return;
+//     }
 
-    function moveToNextWord() {
-        if (currentWord.nextSibling.childNodes[0].textContent == "↩") {
-            addExcessLetter();
-            return;
-        }
-        determineWordCorrect();
-        currentWord.classList.remove('activeWord');
-        currentWord = currentWord.nextSibling;
-        currentWord.classList.add('activeWord');
-        currentLetter = currentWord.childNodes[0];
-    }
+//     function moveToNextWord() {
+//         if (currentWord.nextSibling.childNodes[0].textContent == "↩") {
+//             addExcessLetter();
+//             return;
+//         }
+//         determineWordCorrect();
+//         currentWord.classList.remove('activeWord');
+//         currentWord = currentWord.nextSibling;
+//         currentWord.classList.add('activeWord');
+//         currentLetter = currentWord.childNodes[0];
+//     }
 
-    function moveToPreviousWord() {
-        if (currentWord.previousSibling == null 
-            || (!currentWord.previousSibling.classList.contains('misspelled') 
-            && !currentWord.previousSibling.classList.contains('partial'))) {
-            return;
-        }
-        currentWord.classList = 'word';
-        currentWord = currentWord.previousSibling;
-        currentWord.classList.add('activeWord');
-        for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
-            if (currentWord.childNodes[i].classList.length > 0) {
-                currentLetter = currentWord.childNodes[i];
-                return;
-            }
-        }
-        currentLetter = currentWord.childNodes[0];
-        return;
-    }
+//     function moveToPreviousWord() {
+//         if (currentWord.previousSibling == null 
+//             || (!currentWord.previousSibling.classList.contains('misspelled') 
+//             && !currentWord.previousSibling.classList.contains('partial'))) {
+//             return;
+//         }
+//         currentWord.classList = 'word';
+//         currentWord = currentWord.previousSibling;
+//         currentWord.classList.add('activeWord');
+//         for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
+//             if (currentWord.childNodes[i].classList.length > 0) {
+//                 currentLetter = currentWord.childNodes[i];
+//                 return;
+//             }
+//         }
+//         currentLetter = currentWord.childNodes[0];
+//         return;
+//     }
 
-    if (key == "Enter") {
-        moveToNextLine();
-        return;
-    }
-    else if (key == " ") {
-        if ((currentLetter.previousSibling == null 
-            || currentLetter.previousSibling.classList.contains('style')) 
-            && currentLetter.classList.length == 0) {
-            let newletter = document.createElement('letter');
-            newletter.classList.add('style');
-            newletter.textContent = " ";
-            currentWord.insertBefore(newletter, currentLetter);
-            return;
-        }
-        moveToNextWord();
-        return;
-    }
+//     if (key == "Enter") {
+//         moveToNextLine();
+//         return;
+//     }
+//     else if (key == " ") {
+//         if ((currentLetter.previousSibling == null 
+//             || currentLetter.previousSibling.classList.contains('style')) 
+//             && currentLetter.classList.length == 0) {
+//             let newletter = document.createElement('letter');
+//             newletter.classList.add('style');
+//             newletter.textContent = " ";
+//             currentWord.insertBefore(newletter, currentLetter);
+//             return;
+//         }
+//         moveToNextWord();
+//         return;
+//     }
 
-    else if (key == "Backspace") {
-        if (currentLetter.classList.length != 0) {
-            if (currentLetter.classList.contains('excess')
-            || currentLetter.classList.contains('style')) {
-                currentLetter = currentLetter.previousSibling;
-                currentLetter.nextSibling.remove();
-                return;
-            }
-            currentLetter.classList = '';
-            return;
-        }
-        if (currentLetter.previousSibling == null) {
-            moveToPreviousWord();
-            return;
-        }
-        if (currentLetter.previousSibling.classList.contains('style')) {
-            currentLetter.previousSibling.remove();
-            return;
-        }
-        currentLetter = currentLetter.previousSibling;
-        currentLetter.classList = '';
-        return;
-    }
+//     else if (key == "Backspace") {
+//         if (currentLetter.classList.length != 0) {
+//             if (currentLetter.classList.contains('excess')
+//             || currentLetter.classList.contains('style')) {
+//                 currentLetter = currentLetter.previousSibling;
+//                 currentLetter.nextSibling.remove();
+//                 return;
+//             }
+//             currentLetter.classList = '';
+//             return;
+//         }
+//         if (currentLetter.previousSibling == null) {
+//             moveToPreviousWord();
+//             return;
+//         }
+//         if (currentLetter.previousSibling.classList.contains('style')) {
+//             currentLetter.previousSibling.remove();
+//             return;
+//         }
+//         currentLetter = currentLetter.previousSibling;
+//         currentLetter.classList = '';
+//         return;
+//     }
 
-    else { 
-        if (currentLetter.classList.length != 0) {
-            if (currentLetter.nextSibling == null) {
-                let newletter = document.createElement('letter');
-                newletter.classList.add('excess');
-                newletter.textContent = key;
-                currentWord.appendChild(newletter);
-                currentLetter = currentLetter.nextSibling;
-                return;
-            }
-            currentLetter = currentLetter.nextSibling;
-        }
-        if (key == currentLetter.textContent) {
-            currentLetter.classList.add('correct');
-        }
-        else {
-            currentLetter.classList.add('incorrect');
-        }
-    }
+//     else { 
+//         if (currentLetter.classList.length != 0) {
+//             if (currentLetter.nextSibling == null) {
+//                 let newletter = document.createElement('letter');
+//                 newletter.classList.add('excess');
+//                 newletter.textContent = key;
+//                 currentWord.appendChild(newletter);
+//                 currentLetter = currentLetter.nextSibling;
+//                 return;
+//             }
+//             currentLetter = currentLetter.nextSibling;
+//         }
+//         if (key == currentLetter.textContent) {
+//             currentLetter.classList.add('correct');
+//         }
+//         else {
+//             currentLetter.classList.add('incorrect');
+//         }
+//     }
     return;
 }
 
-// Start typing
-    // Event listener for the right letter
+// // Start typing
+//     // Event listener for the right letter
 
-    // If there is a timer, inititate timer
-    // startTimer()
+//     // If there is a timer, inititate timer
+//     // startTimer()
         // Update DOM timer every second
 
 // Typing
