@@ -11,7 +11,7 @@ let inputString = `class Solution: def twoSum(self, nums: List[int], target: int
 
 // Takes in a string of code and selected language as a string
 // Returns an array of objects {string, class} 
-function createHighlightedElement(stringCode, language) {
+function createHighlightedObjects(stringCode, language) {
     if (stringCode.length === 0) {
         console.log('String code is empty. Try another string.');
         return;
@@ -288,6 +288,6 @@ function letterInputEvent(e) {
 
 
 // Initialize shit
-let arr = createHighlightedElement(inputString, currentLanguage);
+let arr = createHighlightedObjects(inputString, currentLanguage);
 createWordBoxDOM(arr,wordBank);
 document.addEventListener('keydown', letterInputEvent);
