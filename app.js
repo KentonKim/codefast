@@ -2,21 +2,20 @@ const wordBank = document.getElementById('words');
 const wordInput = document.getElementById('wordsInput');
 const testDiv = document.getElementById('testing');
 let characterPointer = 0;
-const testString = `class Solution: def twoSum(self, nums: List[int], target: int) -> List[int]:
+let inputString = `class Solution: def twoSum(self, nums: List[int], target: int) -> List[int]:
     d = {}
     for index, value in enumerate(nums):
         if target-value in d:
             return [d[target-value], index]
         d[value] = index`;
-            
-// On startup
-    // function getString() 
-        // get passage of code to be typed out
-        // make into a string
-        // return string
 
-testDiv.classList.add('word');
-testDiv.textContent = testString;
+let testing = document.createElement('div');
+testing.textContent = inputString;
+testDiv.textContent = inputString;
+hljs.highlightElement(testDiv);
+
+
+
 
 function parseStringToLetters(string) {
     return string.match(/[^\s]+|\n| {4}/g);
@@ -66,7 +65,7 @@ function displayWords(arrayOfWords, wordBoxElement) {
 }
 
 
-const attempt = parseStringToLetters(testString);
+const attempt = parseStringToLetters(inputString);
 displayWords(attempt,wordBank);
 
 // Initialize shit
