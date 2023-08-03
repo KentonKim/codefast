@@ -382,8 +382,11 @@ body {
 }
 
 .word {
-    color: #77777f;
     margin: 0.3rem;
+}
+
+letter.unfilled {
+    color: #77777f !important;
 }
 
 letter {
@@ -552,7 +555,7 @@ code.hljs {
 .hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title {
   color:#61aeee;
 }
-.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_ {
+.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_,.hljs-title.class {
   color:#e6c07b;
 }
 .hljs-emphasis {

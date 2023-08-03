@@ -9,19 +9,24 @@ let inputString = `class Solution: def twoSum(self, nums: List[int], target: int
             return [d[target-value], index]
         d[value] = index`;
 
-const testdiv = document.createElement('div');
-testdiv.textContent = inputString;
-testdiv.classList.add('language-python')
-hljs.highlightElement(testdiv);
-document.querySelector('main').appendChild(testdiv);
-
-
-function createHighlightedElement(string, language) {
+// Takes in a string of code and selected language as a string
+// Returns an array of objects {string, class} 
+function createHighlightedElement(stringCode, language) {
+    if (stringCode.length === 0) {
+        console.log('String code is empty. Try another string.');
+        return;
+    }
+    // Takes in array that may have string or objects as elements
+    // If string, creates an object with that string and parent class
+    // Else, makes a recursive call to the children of the elements
     function returnBaseObject(arrayOfObjects, parentClass) {
         let array = [];
         for (object of arrayOfObjects) {
             if (typeof(object) == "string") {
-                array.push({object, parentClass});
+                if (parentClass != '' && !parentClass.startsWith('hljs-')) {
+                    parentClass = "hljs-".concat(parentClass);
+                }
+                array.push({string:object, scope:parentClass.replace(/\./g, " ")});
             }
             else {
                 array.push(...returnBaseObject(object.children, object.scope));
@@ -29,71 +34,70 @@ function createHighlightedElement(string, language) {
         }
         return array;
     }
-    const rawArray = hljs.highlight(string, {language: language})._emitter.rootNode.children;
+    const rawArray = hljs.highlight(stringCode, {language: language})._emitter.rootNode.children;
     return returnBaseObject(rawArray, "");
 }
 
-
-
-function parseStringToLetters(string) {
-    return string.match(/[^\s]+|\n| {4}/g);
-}
-
-function displayWords(arrayOfWords, wordBoxElement) {
-    let letterElement;
-    let wordElement;
-    let lineElement = document.createElement('div');
-    lineElement.classList.add("line");
-
-    // For each word
-    for (let i = 0; i < arrayOfWords.length; i++) {
-        wordElement = document.createElement('div');
-        wordElement.classList.add('word');
-
-        if (arrayOfWords[i] == "\n") {
-            letterElement = document.createElement('letter');
-            letterElement.textContent = "↩";
-            wordElement.appendChild(letterElement);
-            lineElement.appendChild(wordElement);
-            wordBoxElement.appendChild(lineElement);
-            lineElement = document.createElement('div');
-            lineElement.classList.add("line");
-            continue;
-        }
-
-
-        if (arrayOfWords[i] == "    ") {
-            letterElement = document.createElement('letter');
-            letterElement.classList.add('correct');
-            letterElement.textContent = '    ';
-            wordElement.appendChild(letterElement);
-            wordElement.classList = 'tab';
+// Takes in an array of objects {string, class}
+// Returns nothing
+function createWordBoxDOM(objects, lineHolder) {
+    function createAndAppendNewLetter(character, wordNode, letterClass) {
+        const newLetter = document.createElement('letter');
+        newLetter.className = letterClass;
+        newLetter.classList.add('unfilled');
+        if (character == "\n") {
+            newLetter.textContent = "↩";
         }
         else {
-            for (let j = 0; j < arrayOfWords[i].length; j++) {
-                letterElement = document.createElement('letter');
-                letterElement.textContent = arrayOfWords[i][j];
-                wordElement.appendChild(letterElement);
+            newLetter.textContent = character;
+        }
+        wordNode.appendChild(newLetter);
+        return;
+    }
+    function createNewWord() {
+        const newWord = document.createElement('div');
+        newWord.classList.add('word');
+        return newWord;
+    }
+    function createNewLine() {
+        const newLine = document.createElement('div');
+        newLine.classList.add('line');
+        return newLine;
+    }
+
+
+    regexTestForNonSpace = /[^\s]/;
+    regexTestForSpace = / /;
+    regexTestForEnter = /|\n|/;
+    // For each Object
+    let word = createNewWord(objects[0].scope);
+    let line = createNewLine();
+
+    for (let i = 0; i < objects.length; i++) {
+        scope = objects[i].scope;
+        for (let j = 0; j < objects[i].string.length; j++) {
+            char = objects[i].string[j];
+
+            if (regexTestForNonSpace.test(char)) {
+                createAndAppendNewLetter(char,word,scope);
+            }
+            else if (regexTestForSpace.test(char)) {
+                line.appendChild(word);
+                word = createNewWord();
+            }
+            else if (regexTestForEnter.test(char)) {
+                word = createNewWord();
+                createAndAppendNewLetter(char,word);
+                line.appendChild(word);
+                lineHolder.appendChild(line);
+                line = createNewLine();
+                word = createNewWord();
             }
         }
-        lineElement.appendChild(wordElement);
     }
-    // Last Line
-    wordBoxElement.appendChild(lineElement);
+    return;
 }
 
-
-const attempt = parseStringToLetters(inputString);
-displayWords(attempt,wordBank);
-
-// Initialize shit
-let currentLine = document.querySelector('.line');
-let currentWord = document.querySelector('.word');
-let currentLetter = document.querySelector('letter');
-currentLine.classList.add('activeLine');
-currentWord.classList.add('activeWord');
-
-document.addEventListener('keydown', letterInputEvent);
 
 function letterInputEvent(e) {
     const key = e.key;
@@ -278,3 +282,12 @@ function letterInputEvent(e) {
     // Characters
 
 // Replay feature
+
+
+
+
+
+// Initialize shit
+let arr = createHighlightedElement(inputString, currentLanguage);
+createWordBoxDOM(arr,wordBank);
+document.addEventListener('keydown', letterInputEvent);
