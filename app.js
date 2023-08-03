@@ -1,6 +1,5 @@
 const wordBank = document.getElementById('words');
 const wordInput = document.getElementById('wordsInput');
-const testDiv = document.getElementById('testing');
 let characterPointer = 0;
 let inputString = `class Solution: def twoSum(self, nums: List[int], target: int) -> List[int]:
     d = {}
@@ -11,8 +10,6 @@ let inputString = `class Solution: def twoSum(self, nums: List[int], target: int
 
 let testing = document.createElement('div');
 testing.textContent = inputString;
-testDiv.textContent = inputString;
-hljs.highlightElement(testDiv);
 
 
 
