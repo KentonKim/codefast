@@ -414,15 +414,12 @@ letter {
     color: #c8c8c8;
 }
 
-.style {
-    color: orange;
-}
-.incorrect {
-    color: red;
+letter.incorrect {
+    color: red !important;
 }
 
-.excess {
-    color: darkred;
+letter.excess {
+    color: darkred !important;
 }
 
 /* Attributes */
@@ -474,39 +471,6 @@ letter {
 
 .z2 {
     z-index: 2;
-}
-
-/* Text Colors */
-.colorComment {
-    color: #6a9955;
-}
-
-.colorLanguage {
-    color: #569CD6;
-}
-
-.colorRegex {
-    color: #646695;
-}
-
-.colorNumeric {
-    color: #b5cea8;
-}
-
-.colorClass {
-    color: #4ec9b0;
-}
-
-.colorReturn {
-    color: #C586C0;
-}
-
-.colorType {
-    color: #007acc;
-}
-
-.colorMethod {
-    color: #D7BA7D;
 }
 
 /* vscode background*/

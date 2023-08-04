@@ -65,7 +65,6 @@ function createWordBoxDOM(objects, lineHolder) {
         return newLine;
     }
 
-
     regexTestForNonSpace = /[^\s]/;
     regexTestForSpace = / /;
     regexTestForEnter = /|\n|/;
@@ -78,12 +77,22 @@ function createWordBoxDOM(objects, lineHolder) {
         for (let j = 0; j < objects[i].string.length; j++) {
             char = objects[i].string[j];
 
-            if (regexTestForNonSpace.test(char)) {
-                createAndAppendNewLetter(char,word,scope);
-            }
-            else if (regexTestForSpace.test(char)) {
+            if (regexTestForSpace.test(char)) {
+                if (objects[i].string.length >= j + 4 
+                    && objects[i].string.substring(j,j+4) == "    ") {
+                        if (word.children.length != 0) {
+                            line.appendChild(word);
+                        }
+                        word = createNewWord();
+                        word.className = "tab";
+                        createAndAppendNewLetter("   ", word,scope);
+                        j += 3;
+                    }
                 line.appendChild(word);
                 word = createNewWord();
+            }
+            else if (regexTestForNonSpace.test(char)) {
+                createAndAppendNewLetter(char,word,scope);
             }
             else if (regexTestForEnter.test(char)) {
                 word = createNewWord();
@@ -106,136 +115,142 @@ function letterInputEvent(e) {
         return;
     }
 
-//     function determineWordCorrect() {
-//         currentWord.classList = 'word';
-//         for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
-//             if (currentWord.childNodes[i].classList.length == 0
-//             || currentWord.childNodes[i].classList.contains('excess') 
-//             || currentWord.childNodes[i].classList.contains('incorrect')) {
-//                 currentWord.classList.add('misspelled');
-//                 return -1;
-//             }
-//             else if (currentWord.childNodes[i].classList.contains('style')) {
-//                 currentWord.classList.add('partial');
-//                 return 0;
-//             }
-//         }
-//         return 1;
-//     }
+    // Also applies misspelled if not correct spelling
+    function isCorrectSpelling(word) {
+        for (let i = word.childNodes.length - 1; i >= 0; i--) {
+            if (word.childNodes[i].classList.contains('unfilled')
+            || word.childNodes[i].classList.contains('excess') 
+            || word.childNodes[i].classList.contains('incorrect')) {
+                word.classList.add('misspelled');
+                return false;
+            }
+        }
+        return true;
+    }
 
-//     function moveToNextLine() {
-//         if (currentLine.nextSibling == null) {
-//             return;
-//         }
-//         currentLine.classList.remove('activeLine');
-//         currentWord.classList.remove('activeWord');
-//         while (currentWord.nextSibling!= null) {
-//             determineWordCorrect();
-//             currentWord = currentWord.nextSibling;
-//         }
-//         currentLine = currentLine.nextSibling;
-//         currentLine.classList.add('activeLine');
-//         currentWord = currentLine.childNodes[0];
-//         while (currentWord.childNodes[0].textContent == "    ") {
-//             currentWord = currentWord.nextSibling;
-//         }
-//         currentWord.classList.add('activeWord');
-//         currentLetter = currentWord.childNodes[0];
-//         return;
-//     }
+    function moveToNextLine() {
+        if (currentLine.nextSibling == null) {
+            return;
+        }
+        currentLine.classList.remove('activeLine');
+        while (currentWord.nextSibling!= null) {
+            isCorrectSpelling(currentWord);
+            currentWord = currentWord.nextSibling;
+        }
+        currentLine = currentLine.nextSibling;
+        currentLine.classList.add('activeLine');
+        currentWord = currentLine.childNodes[0];
+        while (currentWord.classList.contains('tab')) { // TODO
+            currentWord = currentWord.nextSibling;
+        }
+        currentLetter = currentWord.childNodes[0];
+        return;
+    }
 
-//     function moveToNextWord() {
-//         if (currentWord.nextSibling.childNodes[0].textContent == "↩") {
-//             addExcessLetter();
-//             return;
-//         }
-//         determineWordCorrect();
-//         currentWord.classList.remove('activeWord');
-//         currentWord = currentWord.nextSibling;
-//         currentWord.classList.add('activeWord');
-//         currentLetter = currentWord.childNodes[0];
-//     }
+    function moveToNextWord() {
+        isCorrectSpelling(currentWord);
+        if (currentWord.nextSibling.childNodes[0].textContent == "↩") {
+            moveToNextLine();
+            return;
+        }
+        currentWord = currentWord.nextSibling;
+        currentLetter = currentWord.childNodes[0];
+    }
 
-//     function moveToPreviousWord() {
-//         if (currentWord.previousSibling == null 
-//             || (!currentWord.previousSibling.classList.contains('misspelled') 
-//             && !currentWord.previousSibling.classList.contains('partial'))) {
-//             return;
-//         }
-//         currentWord.classList = 'word';
-//         currentWord = currentWord.previousSibling;
-//         currentWord.classList.add('activeWord');
-//         for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
-//             if (currentWord.childNodes[i].classList.length > 0) {
-//                 currentLetter = currentWord.childNodes[i];
-//                 return;
-//             }
-//         }
-//         currentLetter = currentWord.childNodes[0];
-//         return;
-//     }
+    function moveToPreviousWord() {
+        function updateLetter() {
+            for (let i = currentWord.childNodes.length - 1; i >= 0; i--) {
+                if (!currentWord.childNodes[i].classList.contains('unfilled')) {
+                    currentLetter = currentWord.childNodes[i];
+                    return;
+                }
+            }
+            currentLetter = currentWord.childNodes[0];
+        }
+        function movetoPreviousLine() {
+            // check if you even can move to previous line or if the rightmost word of the previous line is misspelled
+            if (currentLine.previousSibling == null 
+                || !currentLine.previousSibling.childNodes[currentLine.previousSibling.childNodes.length - 2].classList.contains('misspelled')) {
+                console.log('will not do anything');
+                return;
+            }
+            currentLine.classList.remove('activeLine');
+            currentLine = currentLine.previousSibling;
+            currentLine.classList.add('activeLine');
+            currentWord = currentLine.childNodes[currentLine.childNodes.length - 2];
+            currentWord.classList.remove('misspelled');
+            while (currentWord.previousSibling 
+                && currentWord.childNodes[0].classList.contains('unfilled')
+                && currentWord.previousSibling.classList.contains('misspelled')) {
+                currentWord = currentWord.previousSibling;
+                currentWord.classList.remove('misspelled');
+            }
+            updateLetter();
+        }
 
-//     if (key == "Enter") {
-//         moveToNextLine();
-//         return;
-//     }
-//     else if (key == " ") {
-//         if ((currentLetter.previousSibling == null 
-//             || currentLetter.previousSibling.classList.contains('style')) 
-//             && currentLetter.classList.length == 0) {
-//             let newletter = document.createElement('letter');
-//             newletter.classList.add('style');
-//             newletter.textContent = " ";
-//             currentWord.insertBefore(newletter, currentLetter);
-//             return;
-//         }
-//         moveToNextWord();
-//         return;
-//     }
+        if (currentWord.previousSibling == null
+            || currentWord.previousSibling.classList.contains('tab')) {
+            movetoPreviousLine();
+            return;
+        }
+        if  (!currentWord.previousSibling.classList.contains('misspelled')) {
+            return;
+        }
+        currentWord = currentWord.previousSibling;
+        currentWord.classList.remove('misspelled');
+        updateLetter();
+    }
 
-//     else if (key == "Backspace") {
-//         if (currentLetter.classList.length != 0) {
-//             if (currentLetter.classList.contains('excess')
-//             || currentLetter.classList.contains('style')) {
-//                 currentLetter = currentLetter.previousSibling;
-//                 currentLetter.nextSibling.remove();
-//                 return;
-//             }
-//             currentLetter.classList = '';
-//             return;
-//         }
-//         if (currentLetter.previousSibling == null) {
-//             moveToPreviousWord();
-//             return;
-//         }
-//         if (currentLetter.previousSibling.classList.contains('style')) {
-//             currentLetter.previousSibling.remove();
-//             return;
-//         }
-//         currentLetter = currentLetter.previousSibling;
-//         currentLetter.classList = '';
-//         return;
-//     }
+    if (key == "Enter") {
+        moveToNextLine();
+        return;
+    }
 
-//     else { 
-//         if (currentLetter.classList.length != 0) {
-//             if (currentLetter.nextSibling == null) {
-//                 let newletter = document.createElement('letter');
-//                 newletter.classList.add('excess');
-//                 newletter.textContent = key;
-//                 currentWord.appendChild(newletter);
-//                 currentLetter = currentLetter.nextSibling;
-//                 return;
-//             }
-//             currentLetter = currentLetter.nextSibling;
-//         }
-//         if (key == currentLetter.textContent) {
-//             currentLetter.classList.add('correct');
-//         }
-//         else {
-//             currentLetter.classList.add('incorrect');
-//         }
-//     }
+    else if (key == " ") {
+        moveToNextWord();
+        return;
+    }
+
+    else if (key == "Backspace") {
+        if (currentLetter.classList.contains('excess')) {
+            currentLetter = currentLetter.previousSibling;
+            currentLetter.nextSibling.remove();
+            return;
+        }
+        if (currentLetter.classList.contains('unfilled')) {
+            if (currentLetter.previousSibling == null) {
+                moveToPreviousWord();
+                return;
+            }
+            currentLetter = currentLetter.previousSibling;
+        }
+        currentLetter.classList.add('unfilled');
+        currentLetter.classList.remove('incorrect');
+        return;
+    }
+
+    else { 
+        // current letter is filled
+        if (!currentLetter.classList.contains('unfilled')) {
+            // create excess letter
+            if (currentLetter.nextSibling == null) {
+                let newletter = document.createElement('letter');
+                newletter.classList.add('excess');
+                newletter.textContent = key;
+                currentWord.appendChild(newletter);
+                currentLetter = currentLetter.nextSibling;
+                return;
+            }
+            currentLetter = currentLetter.nextSibling;
+        }
+        if (key == currentLetter.textContent) {
+            currentLetter.classList.remove('unfilled');
+        }
+        else {
+            currentLetter.classList.remove('unfilled');
+            currentLetter.classList.add('incorrect');
+        }
+    }
     return;
 }
 
@@ -290,3 +305,8 @@ function letterInputEvent(e) {
 let arr = createHighlightedObjects(inputString, currentLanguage);
 createWordBoxDOM(arr,wordBank);
 document.addEventListener('keydown', letterInputEvent);
+
+let currentLine = document.querySelector('.line');
+currentLine.classList.add('activeLine');
+let currentWord = currentLine.childNodes[0]; 
+let currentLetter = currentWord.childNodes[0];
