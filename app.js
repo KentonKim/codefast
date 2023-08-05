@@ -97,7 +97,8 @@ function createWordBoxDOM(objects, lineHolder) {
             else if (regexTestForEnter.test(char)) {
                 line.appendChild(word);
                 word = createNewWord();
-                createAndAppendNewLetter(char,word);
+                word.className = "enter";
+                createAndAppendNewLetter(char,word,scope);
                 line.appendChild(word);
                 lineHolder.appendChild(line);
                 line = createNewLine();
@@ -131,6 +132,20 @@ function letterInputEvent(e) {
         return true;
     }
 
+    function animateEnter(word) {
+        word.childNodes[0].classList.remove('unfilled');
+        word.childNodes[0].classList.add('delaySyntax');
+        setTimeout(() => {
+            word.childNodes[0].classList.remove('delaySyntax');
+            word.classList.add('hidden');
+        }, 200);
+    }
+
+    function resetEnter(word) {
+        word.childNodes[0].classList.add('unfilled');
+        word.classList.remove('hidden');
+    }
+
     function moveToNextLine() {
         if (currentLine.nextSibling == null) {
             return;
@@ -140,6 +155,7 @@ function letterInputEvent(e) {
             isCorrectSpelling(currentWord);
             currentWord = currentWord.nextSibling;
         }
+        animateEnter(currentWord);
         currentLine = currentLine.nextSibling;
         currentLine.classList.add('activeLine');
         currentWord = currentLine.childNodes[0];
@@ -181,6 +197,7 @@ function letterInputEvent(e) {
             currentLine = currentLine.previousSibling;
             currentLine.classList.add('activeLine');
             currentWord = currentLine.childNodes[currentLine.childNodes.length - 2];
+            resetEnter(currentWord.nextSibling);
             currentWord.classList.remove('misspelled');
             while (currentWord.previousSibling 
                 && currentWord.childNodes[0].classList.contains('unfilled')
