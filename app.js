@@ -1,5 +1,6 @@
 const wordBank = document.getElementById('words');
 const wordInput = document.getElementById('wordsInput');
+const cursor = document.getElementById('cursor');
 let characterPointer = 0;
 let currentLanguage = "python";
 let inputString = `class Solution: def twoSum(self, nums: List[int], target: int) -> List[int]:
@@ -223,33 +224,34 @@ function letterInputEvent(e) {
 
     if (key == "Enter") {
         moveToNextLine();
-        return;
     }
 
     else if (key == " ") {
         moveToNextWord();
-        return;
     }
 
     else if (key == "Backspace") {
         if (currentLetter.classList.contains('excess')) {
             currentLetter = currentLetter.previousSibling;
             currentLetter.nextSibling.remove();
-            return;
         }
-        if (currentLetter.classList.contains('unfilled')) {
+        else if (currentLetter.classList.contains('unfilled')) {
             if (currentLetter.previousSibling == null) {
                 moveToPreviousWord();
-                return;
             }
-            currentLetter = currentLetter.previousSibling;
+            else {
+                currentLetter = currentLetter.previousSibling;
+                currentLetter.classList.add('unfilled');
+                currentLetter.classList.remove('incorrect');
+                currentLetter.classList.remove('delaySyntax');
+            }
         }
-        currentLetter.classList.add('unfilled');
-        currentLetter.classList.remove('incorrect');
-        currentLetter.classList.remove('delaySyntax');
-        return;
+        else {
+            currentLetter.classList.add('unfilled');
+            currentLetter.classList.remove('incorrect');
+            currentLetter.classList.remove('delaySyntax');
+        }
     }
-
     else { 
         // current letter is filled
         if (!currentLetter.classList.contains('unfilled')) {
@@ -260,9 +262,10 @@ function letterInputEvent(e) {
                 newletter.textContent = key;
                 currentWord.appendChild(newletter);
                 currentLetter = currentLetter.nextSibling;
-                return;
             }
-            currentLetter = currentLetter.nextSibling;
+            else {
+                currentLetter = currentLetter.nextSibling;
+            }
         }
         if (key == currentLetter.textContent) {
             currentLetter.classList.remove('unfilled');
@@ -273,9 +276,21 @@ function letterInputEvent(e) {
             currentLetter.classList.add('incorrect');
         }
     }
+    updateCursor(currentLetter);
     return;
 }
 
+function updateCursor(letter) {
+    const rect = letter.getBoundingClientRect();
+    let x = rect.left + window.scrollX;
+    const y = rect.top + window.scrollY;
+    if (!currentLetter.classList.contains('unfilled')) {
+        x += rect.width;
+    }
+    cursor.style.left = x + "px";
+    cursor.style.top = y + "px";
+    return;
+}
 // // Start typing
 //     // Event listener for the right letter
 
@@ -327,8 +342,10 @@ function letterInputEvent(e) {
 let arr = createHighlightedObjects(inputString, currentLanguage);
 createWordBoxDOM(arr,wordBank);
 document.addEventListener('keydown', letterInputEvent);
-
 let currentLine = document.querySelector('.line');
 currentLine.classList.add('activeLine');
 let currentWord = currentLine.childNodes[0]; 
 let currentLetter = currentWord.childNodes[0];
+cursor.style.height = 0.8*window.getComputedStyle(currentWord).height.slice(0,-2) + "px";
+cursor.style.width = "1px";
+updateCursor(currentLetter);

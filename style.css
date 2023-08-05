@@ -375,6 +375,14 @@ body {
     width: clamp(45ch, 80%, 80ch);
 }
 
+#cursor {
+  background-color: yellow;
+  border: yellow solid 1px;
+  height: 3%;
+  position: absolute;
+}
+
+
 /* Word Bank */
 .line {
     display: flex;
@@ -398,7 +406,7 @@ body {
 }
 
 .misspelled {
-    text-decoration: underline solid red;
+    border-bottom: red 0.01rem solid;
 }
 
 /* Letter Specific */
@@ -409,6 +417,7 @@ letter.unfilled {
 
 letter {
     white-space: pre;
+    padding-right: 0.05rem;
 }
 
 letter.delaySyntax {
