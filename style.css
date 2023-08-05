@@ -385,14 +385,6 @@ body {
     margin: 0.3rem;
 }
 
-letter.unfilled {
-    color: #77777f !important;
-}
-
-letter {
-    white-space: pre;
-}
-
 .activeLine {
     background-color: #141414;
 }
@@ -410,8 +402,17 @@ letter {
 }
 
 /* Letter Specific */
-.correct {
-    color: #c8c8c8;
+
+letter.unfilled {
+    color: #77777f !important;
+}
+
+letter {
+    white-space: pre;
+}
+
+letter.delaySyntax {
+  color:#abb2bf !important;
 }
 
 letter.incorrect {
@@ -471,19 +472,6 @@ letter.excess {
 
 .z2 {
     z-index: 2;
-}
-
-/* vscode background*/
-.darkbgd2 {
-    background-color: #252526;
-}
-
-.darkbgd3 {
-    background-color: #2d2d30;
-}
-
-.darkbgd4 {
-    background-color: #3e3e42;
 }
 
 /* Atom One Dark */

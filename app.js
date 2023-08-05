@@ -125,6 +125,9 @@ function letterInputEvent(e) {
                 return false;
             }
         }
+        for (let i = word.childNodes.length - 1; i >= 0; i--) {
+            word.childNodes[i].classList.remove('delaySyntax');
+        }
         return true;
     }
 
@@ -226,6 +229,7 @@ function letterInputEvent(e) {
         }
         currentLetter.classList.add('unfilled');
         currentLetter.classList.remove('incorrect');
+        currentLetter.classList.remove('delaySyntax');
         return;
     }
 
@@ -245,6 +249,7 @@ function letterInputEvent(e) {
         }
         if (key == currentLetter.textContent) {
             currentLetter.classList.remove('unfilled');
+            currentLetter.classList.add('delaySyntax');
         }
         else {
             currentLetter.classList.remove('unfilled');
