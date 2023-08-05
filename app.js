@@ -95,6 +95,7 @@ function createWordBoxDOM(objects, lineHolder) {
                 createAndAppendNewLetter(char,word,scope);
             }
             else if (regexTestForEnter.test(char)) {
+                line.appendChild(word);
                 word = createNewWord();
                 createAndAppendNewLetter(char,word);
                 line.appendChild(word);
@@ -106,7 +107,6 @@ function createWordBoxDOM(objects, lineHolder) {
     }
     return;
 }
-
 
 function letterInputEvent(e) {
     const key = e.key;
