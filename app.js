@@ -1,7 +1,6 @@
-const wordBank = document.getElementById('words');
-const wordInput = document.getElementById('wordsInput');
+const wordBank = document.getElementById('word__Bank');
 const cursor = document.getElementById('cursor');
-let characterPointer = 0;
+const centerDiv = document.getElementById('center__column');
 let currentLanguage = "python";
 let inputString = `class Solution: def twoSum(self, nums: List[int], target: int) -> List[int]:
     d = {}
@@ -281,42 +280,20 @@ function letterInputEvent(e) {
 }
 
 function updateCursor(letter) {
+    const centerDivRect = centerDiv.getBoundingClientRect();
     const rect = letter.getBoundingClientRect();
     let x = rect.left + window.scrollX;
-    const y = rect.top + window.scrollY;
+    let y = rect.top + window.scrollY;
     if (!currentLetter.classList.contains('unfilled')) {
         x += rect.width;
     }
-    cursor.style.left = x + "px";
-    cursor.style.top = y + "px";
+    stringX = x - (centerDivRect.left + 2) + "px";
+    stringY = y - (centerDivRect.top + 2) + "px";
+    cursor.style.transform = `translate(${stringX}, ${stringY})`;
+    // cursor.style.left = stringX;
+    // cursor.style.top = stringY;
     return;
-}
-// // Start typing
-//     // Event listener for the right letter
-
-//     // If there is a timer, inititate timer
-//     // startTimer()
-        // Update DOM timer every second
-
-// Typing
-    // Event listener every keydown
-        // Case 1 (At start of word)
-            // Case 1.1 (Previous word was incorrect)
-                // Put cursor right after most recent filled in letter (correct / incorrect / extra)
-            // Case 1.2 (Previous word was correct)
-                // Unable to backspace
-        // Case 2 (At middle or end of work)
-            // Backspace normally
-
-        // Case 3 (spacebar at end of word): correct
-            // move onto next word (nothing happens)
-        // Case 4 (excessive spacebar): technically correct
-            // Case 4.1 (between words)
-            // Case 4.2 (between variables and equal signs)
-                // ex: def fxn(filename, start_depth=None): ---> def fxn( filename , start_depth = None ) :
-        // Case 5 (not enough spacebar): technically correct
-        // Case 6 (preemptive spacebar): incorrect
-// spaces between words and between parentheses should not count as an error
+} 
 
 // End condition
     // Identify end conditon
@@ -334,18 +311,14 @@ function updateCursor(letter) {
 
 // Replay feature
 
-
-
-
-
 // Initialize shit
-let arr = createHighlightedObjects(inputString, currentLanguage);
+const arr = createHighlightedObjects(inputString, currentLanguage);
 createWordBoxDOM(arr,wordBank);
 document.addEventListener('keydown', letterInputEvent);
 let currentLine = document.querySelector('.line');
 currentLine.classList.add('activeLine');
 let currentWord = currentLine.childNodes[0]; 
 let currentLetter = currentWord.childNodes[0];
-cursor.style.height = 0.8*window.getComputedStyle(currentWord).height.slice(0,-2) + "px";
-cursor.style.width = "1px";
+cursor.style.height = window.getComputedStyle(currentWord).height;
+
 updateCursor(currentLetter);

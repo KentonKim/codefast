@@ -350,12 +350,27 @@ template {
 
 /* End of Normalize.css*/
 
-
+* {
+  box-sizing: border-box;
+}
 :root {
+    --modal-font-size: 24px;
+    --color-light-grey: #abb2bf;
+    --color-dark-grey: #282c34;
+    --color-select-grey: #333842;
+    --color-grey: #5c6370;
+    --color-purple: #c678dd;
+    --color-red: #e06c75;
+    --color-cyan: #56b6c2;
+    --color-green: #98c379;
+    --color-orange: #d19a66;
+    --color-blue: #61aeee;
+    --color-dark-blue: #579cd6;
+    --color-yellow: #e6c07b;
+    --color-dark-red: #d32d3a; 
     box-sizing: border-box;
     /* border: 1px solid green; */
     font-family: 'Open Sans', Verdana, Arial, sans-serif; 
-    font-size: 30px;
     tabindex: -1;
     line-height: calc(1ex / 0.32);
 }
@@ -370,58 +385,79 @@ body {
     margin: 0;
 }
 
+main {
+  height: 80vh;
+}
+
+header, footer {
+  height: 10vh;
+  border: var(--color-green) 1px solid;
+}
+
+#center__column {
+  border: solid 1px greenyellow;
+  margin: auto;
+  height: 100%;
+  width: clamp(50ch, 80%, 120ch);
+  position: relative;
+}
 #wordsWrap {
     border: solid 1px white;
-    width: clamp(45ch, 80%, 80ch);
+}
+
+#words {
+  box-sizing: border-box;
 }
 
 #cursor {
-  background-color: yellow;
-  border: yellow solid 1px;
-  height: 3%;
+  background-color: var(--color-dark-blue);
+  border: var(--color-dark-blue) solid 1px;
   position: absolute;
+  transition: traease-outs ease;
 }
 
-
-/* Word Bank */
 .line {
     display: flex;
     flex-flow: wrap;
+    box-sizing: border-box;
+    align-items: stretch;
+    align-content: stretch;
 }
 
-.word {
-    margin: 0.3rem;
+.line div {
+    line-height: 1rem;
+    border-bottom: transparent .01rem solid;
+    display: block;
+    margin: 0.3rem; 
 }
 
 .activeLine {
-    background-color: #141414;
+    background-color: var(--color-select-grey);
 }
 
-.activeWord {
-    border: 1px solid white;
-}
-
-.partial {
-    text-decoration: underline solid yellow;
-}
-
-.misspelled {
-    border-bottom: red 0.01rem solid;
+.word.misspelled {
+    border-bottom: var(--color-dark-red) 0.01rem solid;
 }
 
 /* Letter Specific */
 
 letter.unfilled {
-    color: #77777f !important;
+    color: var(--color-grey) !important;
+}
+
+div letter {
+  display: inline-block;
 }
 
 letter {
+    font-size: var(--modal-font-size);
+    line-height: var(--modal-font-size);
     white-space: pre;
     padding-right: 0.05rem;
 }
 
 letter.delaySyntax {
-  color:#abb2bf !important;
+  color: var(--color-light-grey) !important;
 }
 
 letter.incorrect {
@@ -491,33 +527,33 @@ code.hljs {
   padding:3px 5px;
 } */
 .hljs {
-  color:#abb2bf;
-  background:#282c34;
+  color: var(--color-light-grey);
+  background: var(--color-dark-grey);
 }
 .hljs-comment,.hljs-quote {
-  color:#5c6370;
+  color: var(--color-grey);
   font-style:italic;
 }
 .hljs-doctag,.hljs-formula,.hljs-keyword {
-  color:#c678dd;
+  color: var(--color-purple);
 }
 .hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst {
-  color:#e06c75;
+  color: var(--color-red);
 }
 .hljs-literal {
-  color:#56b6c2;
+  color: var(--color-cyan);
 }
 .hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string { 
-  color:#98c379;
+  color: var(--color-green);
 }
 .hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable {
-  color:#d19a66;
+  color: var(--color-orange);
 }
 .hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title {
-  color:#61aeee;
+  color: var(--color-blue);
 }
 .hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_,.hljs-title.class {
-  color:#e6c07b;
+  color: var(--color-yellow);
 }
 .hljs-emphasis {
   font-style:italic;
