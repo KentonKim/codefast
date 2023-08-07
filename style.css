@@ -400,6 +400,7 @@ header, footer {
   height: 100%;
   width: clamp(50ch, 80%, 120ch);
   position: relative;
+  overflow: scroll;
 }
 #wordsWrap {
     border: solid 1px white;
@@ -531,7 +532,7 @@ code.hljs {
   background: var(--color-dark-grey);
 }
 .hljs-comment,.hljs-quote {
-  color: var(--color-grey);
+  color: var(--color-green);
   font-style:italic;
 }
 .hljs-doctag,.hljs-formula,.hljs-keyword {
@@ -540,7 +541,7 @@ code.hljs {
 .hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst {
   color: var(--color-red);
 }
-.hljs-literal {
+.hljs-params,.hljs-literal {
   color: var(--color-cyan);
 }
 .hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string { 
