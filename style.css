@@ -413,7 +413,7 @@ header, footer {
   background-color: var(--color-dark-blue);
   border: var(--color-dark-blue) solid 1px;
   position: absolute;
-  transition: traease-outs ease;
+  transition: transform 0.1s ease;
 }
 
 .line {
