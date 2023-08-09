@@ -349,7 +349,19 @@ template {
 }
 
 /* End of Normalize.css*/
+@font-face {
+  font-family: 'FiraFont';
+  src: url('fonts/FiraMono-Regular.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
 
+@font-face {
+  font-family: 'FiraFont';
+  src: url('fonts/FiraMono-Bold.ttf');
+  font-weight: bold;
+  font-style: normal;
+}
 * {
   box-sizing: border-box;
 }
@@ -368,9 +380,10 @@ template {
     --color-dark-blue: #579cd6;
     --color-yellow: #e6c07b;
     --color-dark-red: #d32d3a; 
+    --font: 'FiraFont';
+    font-family: var(--font);
     box-sizing: border-box;
     /* border: 1px solid green; */
-    font-family: 'Open Sans', Verdana, Arial, sans-serif; 
     tabindex: -1;
     line-height: calc(1ex / 0.32);
 }
@@ -398,7 +411,8 @@ header, footer {
   border: solid 1px greenyellow;
   margin: auto;
   height: 100%;
-  width: clamp(50ch, 80%, 120ch);
+  /* width: clamp(50ch, 80%, 120ch); */
+  width: 90%;
   position: relative;
   overflow: scroll;
 }

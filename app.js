@@ -2,84 +2,144 @@ const wordBank = document.getElementById('word__Bank');
 const cursor = document.getElementById('cursor');
 const centerDiv = document.getElementById('center__column');
 let currentLanguage = "python";
-// let inputString = `class Solution: def twoSum(self, nums: List[int], target: int) -> List[int]:
-//     d = {}
-//     for index, value in enumerate(nums):
-//         if target-value in d:
-//             return [d[target-value], index]
-//         d[value] = index`;
-let inputString = `# Time: O(nlogn)
-# Space: O(n)
+
+let inputString = `# Time:  O(|V| + |E|)
+# Space: O(|V|)
+
+import threading
+import Queue
+
+
+# """
+# This is HtmlParser's API interface.
+# You should not implement it, or speculate about its implementation
+# """
+class HtmlParser(object):
+   def getUrls(self, url):
+       """
+       :type url: str
+       :rtype List[str]
+       """
+       pass
+
 
 class Solution(object):
-    def wiggleSort(self, nums):
+    NUMBER_OF_WORKERS = 8
+    
+    def __init__(self):
+        self.__cv = threading.Condition()
+        self.__q = Queue.Queue()
+
+    def crawl(self, startUrl, htmlParser):
         """
-        :type nums: List[int]
-        :rtype: void Do not return anything, modify nums in-place instead.
+        :type startUrl: str
+        :type htmlParser: HtmlParser
+        :rtype: List[str]
         """
-        nums.sort()
-        mid = (len(nums) - 1) / 2
-        nums[::2], nums[1::2] = nums[mid::-1], nums[:mid:-1]
+        SCHEME = "http://"
+        def hostname(url):
+            pos = url.find('/', len(SCHEME))
+            if pos == -1:
+                return url
+            return url[:pos]
+
+        def worker(htmlParser, lookup):
+            while True:
+                from_url = self.__q.get()
+                if from_url is None:
+                    break
+                name = hostname(from_url)
+                for to_url in htmlParser.getUrls(from_url):
+                    if name != hostname(to_url):
+                        continue
+                    with self.__cv:
+                        if to_url not in lookup:
+                           lookup.add(to_url)
+                           self.__q.put(to_url)
+                self.__q.task_done()
+
+        workers = []
+        self.__q = Queue.Queue()
+        self.__q.put(startUrl)
+        lookup = set([startUrl])
+        for i in xrange(self.NUMBER_OF_WORKERS):
+            t = threading.Thread(target=worker, args=(htmlParser, lookup))
+            t.start()
+            workers.append(t)
+        self.__q.join()
+        for t in workers:
+            self.__q.put(None)
+        for t in workers:
+            t.join()
+        return list(lookup)
 
 
-# Time:  O(n) ~ O(n^2)
-# Space: O(1)
-# Tri Partition (aka Dutch National Flag Problem) with virtual index solution.
-from random import randint
+# Time:  O(|V| + |E|)
+# Space: O(|V|)
+import threading
+import collections
 
 
 class Solution2(object):
-    def wiggleSort(self, nums):
+    NUMBER_OF_WORKERS = 8
+    
+    def __init__(self):
+        self.__cv = threading.Condition()
+        self.__q = collections.deque()
+        self.__working_count = 0
+
+    def crawl(self, startUrl, htmlParser):
         """
-        :type nums: List[int]
-        :rtype: None Do not return anything, modify nums in-place instead.
+        :type startUrl: str
+        :type htmlParser: HtmlParser
+        :rtype: List[str]
         """
-        def nth_element(nums, n, compare=lambda a, b: a < b):
-            def tri_partition(nums, left, right, target, compare):
-                mid = left
-                while mid <= right:
-                    if nums[mid] == target:
-                        mid += 1
-                    elif compare(nums[mid], target):
-                        nums[left], nums[mid] = nums[mid], nums[left]
-                        left += 1
-                        mid += 1
-                    else:
-                        nums[mid], nums[right] = nums[right], nums[mid]
-                        right -= 1
-                return left, right
+        SCHEME = "http://"
+        def hostname(url):
+            pos = url.find('/', len(SCHEME))
+            if pos == -1:
+                return url
+            return url[:pos]
 
-            left, right = 0, len(nums)-1
-            while left <= right:
-                pivot_idx = randint(left, right)
-                pivot_left, pivot_right = tri_partition(nums, left, right, nums[pivot_idx], compare)
-                if pivot_left <= n <= pivot_right:
-                    return
-                elif pivot_left > n:
-                    right = pivot_left-1
-                else:  # pivot_right < n.
-                    left = pivot_right+1
+        def worker(htmlParser, lookup):
+            while True:
+                with self.__cv:
+                    while not self.__q:
+                        self.__cv.wait()
+                    from_url = self.__q.popleft()
+                    if from_url is None:
+                        break
+                    self.__working_count += 1
+                name = hostname(from_url)
+                for to_url in htmlParser.getUrls(from_url):
+                    if name != hostname(to_url):
+                        continue
+                    with self.__cv:
+                        if to_url not in lookup:
+                           lookup.add(to_url)
+                           self.__q.append(to_url)
+                           self.__cv.notifyAll()
+                with self.__cv:
+                    self.__working_count -= 1
+                    if not self.__q and not self.__working_count:
+                        self.__cv.notifyAll()
 
-        def reversedTriPartitionWithVI(nums, val):
-            def idx(i, N):
-                return (1 + 2 * (i)) % N
-
-            N = len(nums) / 2 * 2 + 1
-            i, j, n = 0, 0, len(nums) - 1
-            while j <= n:
-                if nums[idx(j, N)] > val:
-                    nums[idx(i, N)], nums[idx(j, N)] = nums[idx(j, N)], nums[idx(i, N)]
-                    i += 1
-                    j += 1
-                elif nums[idx(j, N)] < val:
-                    nums[idx(j, N)], nums[idx(n, N)] = nums[idx(n, N)], nums[idx(j, N)]
-                    n -= 1
-                else:
-                    j += 1
-
-        mid = (len(nums)-1)//2
-        nth_element(nums, mid)
-        reversedTriPartitionWithVI(nums, nums[mid])`
+        workers = []
+        self.__q = collections.deque([startUrl])
+        lookup = set([startUrl])
+        for i in xrange(self.NUMBER_OF_WORKERS):
+            t = threading.Thread(target=worker, args=(htmlParser, lookup))
+            t.start()
+            workers.append(t)
+        with self.__cv:
+            while self.__q or self.__working_count:
+                self.__cv.wait()
+            for i in xrange(self.NUMBER_OF_WORKERS):
+                self.__q.append(None)
+            self.__cv.notifyAll()
+        for t in workers:
+            t.join()
+        return list(lookup)`
 
 // Takes in a string of code and selected language as a string
 // Returns an array of objects {string, class} 
@@ -111,18 +171,19 @@ function createHighlightedObjects(stringCode, language) {
 }
 
 // Takes in an array of objects {string, class}
-// Returns nothing
+// Returns # of letters, # of words 
 function createWordBoxDOM(objects, lineHolder) {
+    const regexTestForNonSpace = /[^\s]/;
+    const regexTestForSpace = / /;
+    const regexTestForEnter = /|\n|/;
+    let wordCount = 0;
+    let letterCount = 0;
+
     function createAndAppendNewLetter(character, wordNode, letterClass) {
         const newLetter = document.createElement('letter');
         newLetter.className = letterClass;
         newLetter.classList.add('unfilled');
-        if (character == "\n") {
-            newLetter.textContent = "↩";
-        }
-        else {
-            newLetter.textContent = character;
-        }
+        newLetter.textContent = character;
         wordNode.appendChild(newLetter);
         return;
     }
@@ -137,9 +198,6 @@ function createWordBoxDOM(objects, lineHolder) {
         return newLine;
     }
 
-    regexTestForNonSpace = /[^\s]/;
-    regexTestForSpace = / /;
-    regexTestForEnter = /|\n|/;
     // For each Object
     let word = createNewWord(objects[0].scope);
     let line = createNewLine();
@@ -160,23 +218,40 @@ function createWordBoxDOM(objects, lineHolder) {
                         createAndAppendNewLetter("   ", word,scope);
                         j += 3;
                     }
+                else if (word.childElementCount == 0) {
+                    continue;
+                }
                 line.appendChild(word);
                 word = createNewWord();
+                wordCount++;
             }
             else if (regexTestForNonSpace.test(char)) {
                 createAndAppendNewLetter(char,word,scope);
+                letterCount++;
             }
             else if (regexTestForEnter.test(char)) {
-                line.appendChild(word);
-                word = createNewWord();
-                word.className = "enter";
-                createAndAppendNewLetter(char,word,scope);
+                if (word.childElementCount == 0) {
+                    continue;
+                }
                 line.appendChild(word);
                 lineHolder.appendChild(line);
                 line = createNewLine();
+                word = createNewWord();
+                wordCount++;
             }
         }
     }
+    return letterCount, wordCount;
+}
+
+function startTypingEvent(e) {
+    if (e.key != firstChar) {
+        return;
+    }
+    startGame();
+    letterInputEvent(e);
+    document.addEventListener('keydown', letterInputEvent);
+    document.removeEventListener(firstChar, startTypingEvent);
     return;
 }
 
@@ -186,7 +261,13 @@ function letterInputEvent(e) {
     if (!regexAllowableKeys.test(key)) {
         return;
     }
+    e.preventDefault();
+    letterInput(key);
+    return;
+}
 
+function letterInput(key) {
+    console.log('inside letter input: ' + key);
     // Also applies misspelled if not correct spelling
     function isCorrectSpelling(word) {
         for (let i = word.childNodes.length - 1; i >= 0; i--) {
@@ -203,48 +284,33 @@ function letterInputEvent(e) {
         return true;
     }
 
-    function animateEnter(word) {
-        word.childNodes[0].classList.remove('unfilled');
-        word.childNodes[0].classList.add('delaySyntax');
-        setTimeout(() => {
-            word.childNodes[0].classList.remove('delaySyntax');
-            word.classList.add('hidden');
-        }, 200);
-    }
-
-    function resetEnter(word) {
-        word.childNodes[0].classList.add('unfilled');
-        word.classList.remove('hidden');
-    }
-
     function moveToNextLine() {
-        if (currentLine.nextSibling == null) {
+        if (currentLine.nextElementSibling == null) {
             return;
         }
         currentLine.classList.remove('activeLine');
-        while (currentWord.nextSibling!= null) {
+        while (currentWord != null) {
             isCorrectSpelling(currentWord);
-            currentWord = currentWord.nextSibling;
+            currentWord = currentWord.nextElementSibling;
         }
-        animateEnter(currentWord);
-        currentLine = currentLine.nextSibling;
+        currentLine = currentLine.nextElementSibling;
         currentLine.classList.add('activeLine');
-        currentWord = currentLine.childNodes[0];
+        currentWord = currentLine.firstElementChild;
         while (currentWord.classList.contains('tab')) { // TODO
-            currentWord = currentWord.nextSibling;
+            currentWord = currentWord.nextElementSibling;
         }
-        currentLetter = currentWord.childNodes[0];
+        currentLetter = currentWord.firstElementChild;
         return;
     }
 
     function moveToNextWord() {
         isCorrectSpelling(currentWord);
-        if (currentWord.nextSibling.childNodes[0].textContent == "↩") {
+        if (currentWord == currentLine.lastElementChild) {
             moveToNextLine();
             return;
         }
-        currentWord = currentWord.nextSibling;
-        currentLetter = currentWord.childNodes[0];
+        currentWord = currentWord.nextElementSibling;
+        currentLetter = currentWord.firstElementChild;
     }
 
     function moveToPreviousWord() {
@@ -259,35 +325,34 @@ function letterInputEvent(e) {
         }
         function movetoPreviousLine() {
             // check if you even can move to previous line or if the rightmost word of the previous line is misspelled
-            if (currentLine.previousSibling == null 
-                || !currentLine.previousSibling.childNodes[currentLine.previousSibling.childNodes.length - 2].classList.contains('misspelled')) {
+            if (currentLine.previousElementSibling == null 
+                || !currentLine.previousElementSibling.lastElementChild.classList.contains('misspelled')) {
                 console.log('will not do anything');
                 return;
             }
             currentLine.classList.remove('activeLine');
-            currentLine = currentLine.previousSibling;
+            currentLine = currentLine.previousElementSibling;
             currentLine.classList.add('activeLine');
-            currentWord = currentLine.childNodes[currentLine.childNodes.length - 2];
-            resetEnter(currentWord.nextSibling);
+            currentWord = currentLine.lastElementChild;
             currentWord.classList.remove('misspelled');
-            while (currentWord.previousSibling 
-                && currentWord.childNodes[0].classList.contains('unfilled')
-                && currentWord.previousSibling.classList.contains('misspelled')) {
-                currentWord = currentWord.previousSibling;
+            while (currentWord.previousElementSibling 
+                && currentWord.firstElementChild.classList.contains('unfilled')
+                && currentWord.previousElementSibling.classList.contains('misspelled')) {
+                currentWord = currentWord.previousElementSibling;
                 currentWord.classList.remove('misspelled');
             }
             updateLetter();
         }
 
-        if (currentWord.previousSibling == null
-            || currentWord.previousSibling.classList.contains('tab')) {
+        if (currentWord.previousElementSibling == null
+            || currentWord.previousElementSibling.classList.contains('tab')) {
             movetoPreviousLine();
             return;
         }
-        if  (!currentWord.previousSibling.classList.contains('misspelled')) {
+        if  (!currentWord.previousElementSibling.classList.contains('misspelled')) {
             return;
         }
-        currentWord = currentWord.previousSibling;
+        currentWord = currentWord.previousElementSibling;
         currentWord.classList.remove('misspelled');
         updateLetter();
     }
@@ -295,23 +360,20 @@ function letterInputEvent(e) {
     if (key == "Enter") {
         moveToNextLine();
     }
-
     else if (key == " ") {
-        e.preventDefault();
         moveToNextWord();
     }
-
     else if (key == "Backspace") {
         if (currentLetter.classList.contains('excess')) {
-            currentLetter = currentLetter.previousSibling;
-            currentLetter.nextSibling.remove();
+            currentLetter = currentLetter.previousElementSibling;
+            currentLetter.nextElementSibling.remove();
         }
         else if (currentLetter.classList.contains('unfilled')) {
-            if (currentLetter.previousSibling == null) {
+            if (currentLetter.previousElementSibling == null) {
                 moveToPreviousWord();
             }
             else {
-                currentLetter = currentLetter.previousSibling;
+                currentLetter = currentLetter.previousElementSibling;
                 currentLetter.classList.add('unfilled');
                 currentLetter.classList.remove('incorrect');
                 currentLetter.classList.remove('delaySyntax');
@@ -327,15 +389,15 @@ function letterInputEvent(e) {
         // current letter is filled
         if (!currentLetter.classList.contains('unfilled')) {
             // create excess letter
-            if (currentLetter.nextSibling == null) {
+            if (currentLetter.nextElementSibling == null) {
                 let newletter = document.createElement('letter');
                 newletter.classList.add('excess');
                 newletter.textContent = key;
                 currentWord.appendChild(newletter);
-                currentLetter = currentLetter.nextSibling;
+                currentLetter = currentLetter.nextElementSibling;
             }
             else {
-                currentLetter = currentLetter.nextSibling;
+                currentLetter = currentLetter.nextElementSibling;
             }
         }
         if (key == currentLetter.textContent) {
@@ -347,6 +409,9 @@ function letterInputEvent(e) {
             currentLetter.classList.add('incorrect');
         }
     }
+
+    cursor.classList.remove('hidden');
+    cursorBlinkDelay = 0;
     updateCursor(currentLetter);
     return;
 }
@@ -367,30 +432,118 @@ function updateCursor(letter) {
     return;
 } 
 
-// End condition
-    // Identify end conditon
-        // Timer
-        // Passage
-        // Manually end
-    // Stop all Event listeners
+function animateCursorblink() {
+    if (cursorBlinkDelay < 1) {
+        cursorBlinkDelay++;
+        return;
+    }
+    cursor.classList.toggle('hidden');
+}
 
-// Results
-    // WPM
-    // Style points
-    // Accuracy
-    // Raw
-    // Characters
+// Geeks for Geeks code
+let TIME_LIMIT = 60;
+// selecting required elements
+// let timer_text = document.querySelector(".curr_time");
+// let accuracy_text = document.querySelector(".curr_accuracy");
+// let error_text = document.querySelector(".curr_errors");
+// let cpm_text = document.querySelector(".curr_cpm");
+// let wpm_text = document.querySelector(".curr_wpm");
+// let quote_text = document.querySelector(".quote");
+// let input_area = document.querySelector(".input_area");
+// let restart_btn = document.querySelector(".restart_btn");
+// let cpm_group = document.querySelector(".cpm");
+// let wpm_group = document.querySelector(".wpm");
+// let error_group = document.querySelector(".errors");
+// let accuracy_group = document.querySelector(".accuracy");
 
-// Replay feature
+let timeLeft = TIME_LIMIT;
+let timeElapsed = 0;
+let total_errors = 0;
+let errors = 0;
+let accuracy = 0;
+let characterTyped = 0;
+let current_quote = "";
+let quoteNo = 0;
+let timer = null;
+
+function startGame() {
+    resetValues();
+    // clear old and start a new timer
+    clearInterval(timer);
+    timer = setInterval(updateTimer, 1000);
+}
+  
+function resetValues() {
+  timeLeft = TIME_LIMIT;
+  timeElapsed = 0;
+  errors = 0;
+  total_errors = 0;
+  accuracy = 0;
+  characterTyped = 0;
+  quoteNo = 0;
+  document.removeEventListener('keydown', letterInputEvent);
+  
+//   accuracy_text.textContent = 100;
+//   timer_text.textContent = timeLeft + 's';
+//   error_text.textContent = 0;
+//   restart_btn.style.display = "none";
+//   cpm_group.style.display = "none";
+//   wpm_group.style.display = "none";
+}
+
+function updateTimer() {
+  if (timeLeft > 0) {
+    // decrease the current time left
+    timeLeft--;
+    // increase the time elapsed
+    timeElapsed++;
+    // update the timer text
+    // timer_text.textContent = timeLeft + "s";
+  }
+  else {
+    // finish the game
+    finishGame();
+  }
+}
+
+function finishGame() {
+    // stop the timer
+    clearInterval(timer);
+    console.log('60 seconds has passed');
+    // disable the input area
+    document.removeEventListener('keydown', letterInputEvent);
+    // show finishing text
+    // quote_text.textContent = "Click on restart to start a new game.";
+    // display restart button
+    // restart_btn.style.display = "block";
+    
+    // calculate cpm and wpm
+    cpm = Math.round(((characterTyped / timeElapsed) * 60));
+    wpm = Math.round((((characterTyped / 5) / timeElapsed) * 60));
+    
+    // update cpm and wpm text
+    // cpm_text.textContent = cpm;
+    // wpm_text.textContent = wpm;
+    
+    // display the cpm and wpm
+    // cpm_group.style.display = "block";
+    // wpm_group.style.display = "block";
+}
+
+// Geeks for geeks code ends here
 
 // Initialize shit
 const arr = createHighlightedObjects(inputString, currentLanguage);
+const firstChar = inputString[0];
 createWordBoxDOM(arr,wordBank);
-document.addEventListener('keydown', letterInputEvent);
 let currentLine = document.querySelector('.line');
-currentLine.classList.add('activeLine');
 let currentWord = currentLine.childNodes[0]; 
 let currentLetter = currentWord.childNodes[0];
+currentLine.classList.add('activeLine');
+document.addEventListener('keydown', startTypingEvent); 
 cursor.style.height = window.getComputedStyle(currentWord).height;
-
+let cursorBlinkDelay = 0;
 updateCursor(currentLetter);
+setInterval(() => {
+    animateCursorblink();
+}, 530);
