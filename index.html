@@ -11,12 +11,8 @@
     <!-- <link rel="script" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"> -->
 </head>
 <body class="hljs">
-    <div id="sidebar">
-        <div id="gamemode-wrapper" class="icon-wrapper">
-            <img src="icons/timer.svg" alt="timer" id="timer-icon" class="icon">
-            <img src="icons/text.svg" alt="text icon" id="text-icon" class="icon">
-        </div>
-        <div id="keyboard-wrapper" class="icon-wrapper selected-wrapper">
+    <div id="sidebar" class="prevent-selection">
+        <div id="keyboard-wrapper" class="selected-wrapper icon-wrapper">
             <img src="icons/keyboard.svg" alt="keyboard icon" id="keyboard-icon" class="icon">
         </div>
         <div id="info-wrapper" class="icon-wrapper">
@@ -31,13 +27,29 @@
     </div>
 
     <main>
-        <header class="">
-        </header>
-        <div class="">
-            <div id="bank__container">
-                <div id="word__bank" class="prevent-selection" tabindex="-1">
-                    <div id="cursor"></div>
+        <header class="prevent-selection">
+            <div id="tab">
+                <div id="timer-tab">
+                    <!-- <img src="icons/timer.svg" alt="timer" id="timer-icon" class="icon">  -->
+                    timed
                 </div>
+                <div id="text-tab">
+                    <!-- <img src="icons/text.svg" alt="text icon" id="text-icon" class="icon">  -->
+                    words
+                </div>
+            </div>
+            <div id="tab-options">
+                <div id="timer-options">
+
+                </div>
+                <div id="text-options">
+
+                </div>
+            </div>
+        </header>
+        <div id="bank__container">
+            <div id="word__bank" class="prevent-selection" tabindex="-1">
+                <div id="cursor"></div>
             </div>
         </div>
     </main>

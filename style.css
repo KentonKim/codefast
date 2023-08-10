@@ -197,6 +197,27 @@ main {
   width: 100%;
 }
 
+header { 
+  height: 10vh;
+}
+
+#tab {
+  border: 1px white solid;
+  height: 70px;
+  display: flex; 
+  align-items: stretch;
+}
+
+#tab div {
+  border: 1px solid white;
+  width: 200px;
+}
+
+#tab-options {
+  border: 1px white solid;
+  height: 40px;
+}
+
 #sidebar {
   position: fixed;
   height: 100vh;
@@ -213,22 +234,24 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-bottom: 10px;
 }
 
 .icon {
-  filter: invert(100%) sepia(0%) saturate(10000%) hue-rotate(180deg);
+  filter: invert(100%) saturate(10000%) hue-rotate(180deg);
   width: 70%;
   margin: 10px;
 }
-
 
 
 #user-wrapper {
   margin-top: auto;
 }
 
-#timer-icon, #text-icon {
-  width: 60%;
+#gamemode-wrapper {
+  border: 5px solid var(--color-grey);
+  border-radius: 40px;
+  width: 80%;
 }
 
 #cursor {
