@@ -1,6 +1,6 @@
-const wordBank = document.getElementById('word__Bank');
+const wordBankDiv = document.getElementById('word__bank');
 const cursor = document.getElementById('cursor');
-const centerDiv = document.getElementById('center__column');
+const codeNumberDiv = document.getElementById('code__numberings');
 let currentLanguage = "python";
 
 let inputString = `# Time:  O(|V| + |E|)
@@ -176,15 +176,16 @@ function createWordBoxDOM(objects, lineHolder) {
     const regexTestForNonSpace = /[^\s]/;
     const regexTestForSpace = / /;
     const regexTestForEnter = /|\n|/;
+    let lineCount = 1;
     let wordCount = 0;
     let letterCount = 0;
 
-    function createAndAppendNewLetter(character, wordNode, letterClass) {
+    function createAndAppendNewLetter(character, node, letterClass) {
         const newLetter = document.createElement('letter');
         newLetter.className = letterClass;
         newLetter.classList.add('unfilled');
         newLetter.textContent = character;
-        wordNode.appendChild(newLetter);
+        node.appendChild(newLetter);
         return;
     }
     function createNewWord() {
@@ -197,10 +198,24 @@ function createWordBoxDOM(objects, lineHolder) {
         newLine.classList.add('line');
         return newLine;
     }
+    function createAndAppendLineNumber(lineNumber, line) {
+        const newNumber = document.createElement('div');
+        const letter = document.createElement('letter');
+        // newNumber.classList.add('hidden');
+        newNumber.classList.add('numbering');
+        if (lineNumber > 1) {
+            newNumber.classList.add('hidden');
+        }
+        letter.textContent = lineNumber.toString().padStart(3, ' ');
+        newNumber.appendChild(letter);
+        line.appendChild(newNumber);
+        return lineNumber + 1;
+    }
 
     // For each Object
     let word = createNewWord(objects[0].scope);
     let line = createNewLine();
+    lineCount = createAndAppendLineNumber(lineCount, line);
 
     for (let i = 0; i < objects.length; i++) {
         scope = objects[i].scope;
@@ -236,12 +251,13 @@ function createWordBoxDOM(objects, lineHolder) {
                 line.appendChild(word);
                 lineHolder.appendChild(line);
                 line = createNewLine();
+                lineCount = createAndAppendLineNumber(lineCount,line);
                 word = createNewWord();
                 wordCount++;
             }
         }
     }
-    return letterCount, wordCount;
+    return [letterCount, wordCount];
 }
 
 function startTypingEvent(e) {
@@ -267,7 +283,6 @@ function letterInputEvent(e) {
 }
 
 function letterInput(key) {
-    console.log('inside letter input: ' + key);
     // Also applies misspelled if not correct spelling
     function isCorrectSpelling(word) {
         for (let i = word.childNodes.length - 1; i >= 0; i--) {
@@ -286,20 +301,26 @@ function letterInput(key) {
 
     function moveToNextLine() {
         if (currentLine.nextElementSibling == null) {
-            return;
+            return; // TODO REPLACE WITH END GAME
         }
-        currentLine.classList.remove('activeLine');
         while (currentWord != null) {
             isCorrectSpelling(currentWord);
             currentWord = currentWord.nextElementSibling;
         }
+        currentLine.classList.remove('activeLine');
+        currentLine.firstElementChild.firstElementChild.classList.add('unfilled');
+
+        // Next Line
         currentLine = currentLine.nextElementSibling;
         currentLine.classList.add('activeLine');
         currentWord = currentLine.firstElementChild;
-        while (currentWord.classList.contains('tab')) { // TODO
+        while (!currentWord.classList.contains('word')) { // TODO
             currentWord = currentWord.nextElementSibling;
         }
         currentLetter = currentWord.firstElementChild;
+
+        // Display number for new line of code
+        currentLine.firstElementChild.classList.remove('hidden');
         return;
     }
 
@@ -331,7 +352,11 @@ function letterInput(key) {
                 return;
             }
             currentLine.classList.remove('activeLine');
+            currentLine.firstElementChild.firstElementChild.classList.add('unfilled');
+
+            // Move to previous line
             currentLine = currentLine.previousElementSibling;
+            currentLine.firstElementChild.firstElementChild.classList.remove('unfilled');
             currentLine.classList.add('activeLine');
             currentWord = currentLine.lastElementChild;
             currentWord.classList.remove('misspelled');
@@ -345,7 +370,7 @@ function letterInput(key) {
         }
 
         if (currentWord.previousElementSibling == null
-            || currentWord.previousElementSibling.classList.contains('tab')) {
+            || !currentWord.previousElementSibling.classList.contains('word')) {
             movetoPreviousLine();
             return;
         }
@@ -417,7 +442,7 @@ function letterInput(key) {
 }
 
 function updateCursor(letter) {
-    const centerDivRect = centerDiv.getBoundingClientRect();
+    const centerDivRect = wordBankDiv.getBoundingClientRect();
     const rect = letter.getBoundingClientRect();
     let x = rect.left + window.scrollX;
     let y = rect.top + window.scrollY;
@@ -441,7 +466,7 @@ function animateCursorblink() {
 }
 
 // Geeks for Geeks code
-let TIME_LIMIT = 60;
+let TIME_LIMIT = 1060;
 // selecting required elements
 // let timer_text = document.querySelector(".curr_time");
 // let accuracy_text = document.querySelector(".curr_accuracy");
@@ -535,9 +560,9 @@ function finishGame() {
 // Initialize shit
 const arr = createHighlightedObjects(inputString, currentLanguage);
 const firstChar = inputString[0];
-createWordBoxDOM(arr,wordBank);
+const [TOTAL_LETTER_COUNT, TOTAL_WORD_COUNT] = createWordBoxDOM(arr,wordBankDiv);
 let currentLine = document.querySelector('.line');
-let currentWord = currentLine.childNodes[0]; 
+let currentWord = currentLine.childNodes[1]; 
 let currentLetter = currentWord.childNodes[0];
 currentLine.classList.add('activeLine');
 document.addEventListener('keydown', startTypingEvent); 
@@ -545,5 +570,5 @@ cursor.style.height = window.getComputedStyle(currentWord).height;
 let cursorBlinkDelay = 0;
 updateCursor(currentLetter);
 setInterval(() => {
-    animateCursorblink();
+    // animateCursorblink();
 }, 530);
