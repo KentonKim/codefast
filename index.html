@@ -10,51 +10,37 @@
     <script src="highlight.min.js"></script>
     <!-- <link rel="script" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"> -->
 </head>
-<body class="hljs h-full">
-    <header class="relative">
-        <div id="header__left">
-            <img src="" alt="" id="codefast__icon">
-            <div id="file__tab">Filejdkjfkdjfkdjfk</div>
-            <div id="edit__tab">Edit</div>
-            <div id="help__tab">Help</div>
+<body class="hljs">
+    <div id="sidebar">
+        <div id="gamemode-wrapper" class="icon-wrapper">
+            <img src="icons/timer.svg" alt="timer" id="timer-icon" class="icon">
+            <img src="icons/text.svg" alt="text icon" id="text-icon" class="icon">
         </div>
-        <div id="header__mid">
-            <img src="" alt="" class="search__icon">
-            CodeFast
+        <div id="keyboard-wrapper" class="icon-wrapper selected-wrapper">
+            <img src="icons/keyboard.svg" alt="keyboard icon" id="keyboard-icon" class="icon">
         </div>
-        <div id="header__right">hi
-            <img src="" alt="" id="toggle__sidebar">
-            <img src="" alt="" id="toggle__terminal">
-            <img src="" alt="" id="settings">
-            <img src="" alt="" id="profile">
+        <div id="info-wrapper" class="icon-wrapper">
+            <img src="icons/info.svg" alt="info icon" id="info-icon" class="icon">
         </div>
-    </header>
-    <main class="relative">
-        <div id="sidebar">
-            <div id="sidebar__top">
-                <img src="" alt="" id="explorer">
-                <img src="" alt="" id="search">
-                <img src="" alt="" id="timer">
-            </div>
-            <div id="sidebar__bot">
-                <img src="" alt="donate">
-            </div>
+        <div id="user-wrapper" class="icon-wrapper">
+            <img src="icons/user.svg" alt="user icon" id="user-icon" class="icon">
         </div>
-        <div id="sidebar__options">
+        <div id="setting-wrapper" class="icon-wrapper">
+            <img src="icons/setting.svg" alt="gear icon for settings" id="setting-icon" class="icon">
         </div>
-        <div id="bank__container">
-            <div id="tabs">
-                <div id="current__tab"> Hello
+    </div>
+
+    <main>
+        <header class="">
+        </header>
+        <div class="">
+            <div id="bank__container">
+                <div id="word__bank" class="prevent-selection" tabindex="-1">
+                    <div id="cursor"></div>
                 </div>
-            </div>
-            <div id="word__bank" class="" tabindex="-1">
-                <div id="cursor"></div>
             </div>
         </div>
     </main>
-    <footer>
-
-    </footer>
     <script  src="app.js"></script>
 </body>
 

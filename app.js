@@ -321,6 +321,7 @@ function letterInput(key) {
 
         // Display number for new line of code
         currentLine.firstElementChild.classList.remove('hidden');
+        currentLine.firstElementChild.firstElementChild.classList.remove('unfilled');
         return;
     }
 
