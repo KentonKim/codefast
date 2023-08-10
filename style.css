@@ -183,7 +183,6 @@ template {
 }
 
 html {
-    overflow-y: scroll;
     scroll-behavior: smooth;
     height: 100%;
 }
@@ -214,9 +213,13 @@ body {
 }
 
 .icon {
-  filter: invert(100%) saturate(10000%) hue-rotate(180deg);
+  filter: invert(60%);
   width: 70%;
   margin: 10px;
+}
+
+.selectable-icon:hover {
+  filter: invert(100%);
 }
 
 #user-wrapper {
@@ -232,14 +235,15 @@ body {
 main {
   margin-left: var(--sidebar-length);
   width: 100%;
+  display: flex;
+  flex-flow: column;
+  height: 100vh;
 }
 
 header {
   z-index: 2;
-}
-
-#bank__container{
-  z-index: 1;
+  width: 100%;
+  flex: none;
 }
 
 /* Header (tab) stuff */
@@ -267,6 +271,7 @@ header {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 1);
   display: flex;
   align-items: stretch;
+  background-color: var(--color-background-grey);
 }
 
 #timer-options, #text-options {
@@ -274,6 +279,48 @@ header {
   justify-content: space-around;
   align-items: center;
   width: var(--tab-width);
+}
+
+/* Main stuff */
+#bank__container{
+  overflow-y: auto;
+  flex: auto;
+  z-index: 1;
+}
+
+#terminal {
+  border-top: solid 1px var(--color-grey);
+  height: 200px;
+  overflow-y: auto;
+  position: relative;
+  padding-left: 10px;
+  flex: none;
+  transition: border-top 0.1s ease;
+}
+
+#terminal-resizing {
+  content: "";
+  position: absolute;
+  top: -8px; /* Adjust this value to control the draggable area's height */
+  left: 0;
+  right: 0;
+  height: 16px; /* Height of the draggable area */
+  cursor: ns-resize; /* Vertical resize cursor */
+  z-index: 99;
+  box-sizing: border-box;
+}
+
+#terminal.resizing {
+  border-top: solid 6px var(--color-blue);
+}
+
+#terminal-title {
+  background-color: var(--color-background-grey);
+  text-decoration-line: underline;
+  margin-bottom: 10px;
+  position: sticky;
+  padding-top: 10px;
+  top: 0px;
 }
 
 #cursor {

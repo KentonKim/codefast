@@ -573,3 +573,35 @@ updateCursor(currentLetter);
 setInterval(() => {
     // animateCursorblink();
 }, 530);
+
+
+
+// script.js
+const terminalDiv = document.getElementById('terminal');
+// Initialize starting height and cursor position
+let startHeight = terminalDiv.clientHeight;
+let startY = 0;
+const terminalResizingDiv = document.getElementById('terminal-resizing');
+// Flag to track if resizing is active
+let isResizing = false;
+// Mouse down event on the pseudo-element to start resizing
+terminalResizingDiv.addEventListener('mousedown', (e) => {
+  isResizing = true;
+  startY = e.clientY;
+  startHeight = terminalDiv.clientHeight;
+  terminalDiv.classList.add('resizing'); // Add the "resizing" class to the pseudo-element
+});
+// Mouse move event to handle resizing
+document.addEventListener('mousemove', (e) => {
+  if (!isResizing) return;
+  const cursorY = e.clientY;
+  const newHeight = startHeight - (cursorY - startY);
+  if (newHeight >= 0) {
+    terminalDiv.style.height = newHeight + 'px';
+  }
+});
+// Mouse up event to stop resizing
+document.addEventListener('mouseup', () => {
+  isResizing = false;
+  terminalDiv.classList.remove('resizing'); // Remove the "resizing" class from the pseudo-element
+});
