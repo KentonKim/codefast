@@ -157,29 +157,37 @@ template {
   /* border: 1px solid white; */
 }
 :root {
-    --modal-font-size: 24px;
-    --sidebar-length: 80px;
-    --color-light-grey: #abb2bf;
-    --color-background-grey: #282c34;
-    --color-background-dark-grey: #121417;
-    --color-select-grey: #333842;
-    --color-grey: #5c6370;
-    --color-purple: #c678dd;
-    --color-red: #e06c75;
-    --color-cyan: #56b6c2;
-    --color-green: #98c379;
-    --color-orange: #d19a66;
-    --color-blue: #61aeee;
-    --color-dark-blue: #579cd6;
-    --color-yellow: #e6c07b;
-    --color-dark-red: #d32d3a; 
-    --font: 'FiraFont';
-    --tab-width: 200px;
-    font-family: var(--font);
-    box-sizing: border-box;
-    /* border: 1px solid green; */
-    tabindex: -1;
-    line-height: calc(1ex / 0.32);
+  --modal-font-size: 24px;
+  --sidebar-length: 80px;
+  --color-filled-font: #abb2bf;
+  --color-background-grey: #282c34;
+  --color-background-dark-grey: #121417;
+  --color-select-grey: #333842;
+  --color-unfilled-font: #5c6370;
+  --color-purple: #c678dd;
+  --color-red: #e06c75;
+  --color-cyan: #56b6c2;
+  --color-green: #98c379;
+  --color-orange: #d19a66;
+  --color-blue: #61aeee;
+  --color-dark-blue: #579cd6;
+  --color-yellow: #e6c07b;
+  --color-dark-red: #d32d3a; 
+  --font: 'FiraFont';
+  --tab-width: 200px;
+  font-family: var(--font);
+  box-sizing: border-box;
+  /* border: 1px solid green; */
+  tabindex: -1;
+  line-height: calc(1ex / 0.32);
+}
+
+* {
+  color: var(--color-unfilled-font);
+}
+
+.filled-font {
+  color: var(--color-filled-font);
 }
 
 html {
@@ -227,7 +235,7 @@ body {
 }
 
 #gamemode-wrapper {
-  border: 5px solid var(--color-grey);
+  border: 5px solid var(--color-unfilled-font);
   border-radius: 40px;
   width: 80%;
 }
@@ -268,10 +276,13 @@ header {
 
 #tab-options {
   height: 40px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 1);
   display: flex;
   align-items: stretch;
   background-color: var(--color-background-grey);
+}
+
+.bottom-shadow {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 1);
 }
 
 #timer-options, #text-options {
@@ -282,14 +293,14 @@ header {
 }
 
 /* Main stuff */
-#bank__container{
+#bank-container{
   overflow-y: auto;
   flex: auto;
   z-index: 1;
 }
 
 #terminal {
-  border-top: solid 1px var(--color-grey);
+  border-top: solid 1px var(--color-unfilled-font);
   height: 200px;
   overflow-y: auto;
   position: relative;
@@ -321,6 +332,7 @@ header {
   position: sticky;
   padding-top: 10px;
   top: 0px;
+  color: inherit;
 }
 
 #cursor {
@@ -344,6 +356,7 @@ div:focus {
 
 .selected-tab {
   background-color: var(--color-background-grey);
+  color: var(--color-filled-font);
 }
 
 .selected-wrapper {
@@ -381,7 +394,7 @@ div:focus {
 }
 
 letter.unfilled {
-    color: var(--color-grey) !important;
+    color: var(--color-unfilled-font) !important;
 }
 
 div letter {
@@ -391,12 +404,13 @@ div letter {
 letter {
     font-size: var(--modal-font-size);
     line-height: var(--modal-font-size);
+    color: var(--color-filled-font);
     white-space: pre;
     padding-right: 0.05rem;
 }
 
 letter.delaySyntax {
-  color: var(--color-light-grey) !important;
+  color: var(--color-filled-font) !important;
 }
 
 letter.incorrect {
@@ -407,6 +421,7 @@ letter.excess {
     color: darkred !important;
 }
 
+
 /* Atom One Dark */
 /* pre code.hljs {
   display:block;overflow-x:auto;padding:1em;
@@ -415,7 +430,7 @@ code.hljs {
   padding:3px 5px;
 } */
 .hljs {
-  color: var(--color-light-grey);
+  color: var(--color-filled-font);
   background: var(--color-background-grey);
 }
 .hljs-comment,.hljs-quote {

@@ -1,8 +1,11 @@
-const wordBankDiv = document.getElementById('word__bank');
+const wordBankDiv = document.getElementById('word-bank');
+const bankContainerDiv = document.getElementById('bank-container');
 const cursor = document.getElementById('cursor');
-const codeNumberDiv = document.getElementById('code__numberings');
+const codeNumberDiv = document.getElementById('code-numberings');
+const tabOptionsDiv = document.getElementById('tab-options');
+const terminalDiv = document.getElementById('terminal');
+let cursorBlinkDelay = 0;
 let currentLanguage = "python";
-
 let inputString = `# Time:  O(|V| + |E|)
 # Space: O(|V|)
 
@@ -141,6 +144,54 @@ class Solution2(object):
             t.join()
         return list(lookup)`
 
+const arr = createHighlightedObjects(inputString, currentLanguage);
+const [TOTAL_LETTER_COUNT, TOTAL_WORD_COUNT] = createWordBoxDOM(arr,wordBankDiv);
+// Initialize starting height and cursor position
+const terminalResizingDiv = document.getElementById('terminal-resizing');
+let terminalStartHeight = terminalDiv.clientHeight;
+let terminalStartY = 0;
+let isTerminalResizing = false;
+
+// Second initializations after string loading
+const firstChar = inputString[0];
+let currentLine = document.querySelector('.line');
+let currentWord = currentLine.childNodes[1]; 
+let currentLetter = currentWord.childNodes[0];
+cursor.style.height = window.getComputedStyle(currentWord).height;
+
+// ~~~~~~ Event Listeners ~~~~~~~
+document.addEventListener('keydown', startTypingEvent); 
+// Showing shadow only if the div is scrolled
+bankContainerDiv.addEventListener('scroll', function() {
+  if (bankContainerDiv.scrollTop > 0) {
+    tabOptionsDiv.classList.add('bottom-shadow');
+  } else {
+    tabOptionsDiv.classList.remove('bottom-shadow');
+  }
+});
+// Mouse down event on the pseudo-element to start resizing
+terminalResizingDiv.addEventListener('mousedown', (e) => {
+  isTerminalResizing = true;
+  terminalStartY = e.clientY;
+  terminalStartHeight = terminalDiv.clientHeight;
+  terminalDiv.classList.add('resizing'); // Add the "resizing" class to the pseudo-element
+});
+// Mouse move event to handle terminal resizing
+document.addEventListener('mousemove', (e) => {
+  if (!isTerminalResizing) return;
+  const cursorY = e.clientY;
+  const newHeight = terminalStartHeight - (cursorY - terminalStartY);
+  if (newHeight >= 0) {
+    terminalDiv.style.height = newHeight + 'px';
+  }
+});
+// Mouse up event to stop terminal resizing
+document.addEventListener('mouseup', () => {
+  isTerminalResizing = false;
+  terminalDiv.classList.remove('resizing'); // Remove the "resizing" class from the pseudo-element
+});
+
+
 // Takes in a string of code and selected language as a string
 // Returns an array of objects {string, class} 
 function createHighlightedObjects(stringCode, language) {
@@ -201,7 +252,6 @@ function createWordBoxDOM(objects, lineHolder) {
     function createAndAppendLineNumber(lineNumber, line) {
         const newNumber = document.createElement('div');
         const letter = document.createElement('letter');
-        // newNumber.classList.add('hidden');
         newNumber.classList.add('numbering');
         if (lineNumber > 1) {
             newNumber.classList.add('hidden');
@@ -215,6 +265,7 @@ function createWordBoxDOM(objects, lineHolder) {
     // For each Object
     let word = createNewWord(objects[0].scope);
     let line = createNewLine();
+    line.classList.add('activeLine');
     lineCount = createAndAppendLineNumber(lineCount, line);
 
     for (let i = 0; i < objects.length; i++) {
@@ -349,7 +400,6 @@ function letterInput(key) {
             // check if you even can move to previous line or if the rightmost word of the previous line is misspelled
             if (currentLine.previousElementSibling == null 
                 || !currentLine.previousElementSibling.lastElementChild.classList.contains('misspelled')) {
-                console.log('will not do anything');
                 return;
             }
             currentLine.classList.remove('activeLine');
@@ -494,6 +544,9 @@ let timer = null;
 
 function startGame() {
     resetValues();
+    setInterval(() => {
+    animateCursorblink();
+    }, 530);
     // clear old and start a new timer
     clearInterval(timer);
     timer = setInterval(updateTimer, 1000);
@@ -557,51 +610,3 @@ function finishGame() {
 }
 
 // Geeks for geeks code ends here
-
-// Initialize shit
-const arr = createHighlightedObjects(inputString, currentLanguage);
-const firstChar = inputString[0];
-const [TOTAL_LETTER_COUNT, TOTAL_WORD_COUNT] = createWordBoxDOM(arr,wordBankDiv);
-let currentLine = document.querySelector('.line');
-let currentWord = currentLine.childNodes[1]; 
-let currentLetter = currentWord.childNodes[0];
-currentLine.classList.add('activeLine');
-document.addEventListener('keydown', startTypingEvent); 
-cursor.style.height = window.getComputedStyle(currentWord).height;
-let cursorBlinkDelay = 0;
-updateCursor(currentLetter);
-setInterval(() => {
-    // animateCursorblink();
-}, 530);
-
-
-
-// script.js
-const terminalDiv = document.getElementById('terminal');
-// Initialize starting height and cursor position
-let startHeight = terminalDiv.clientHeight;
-let startY = 0;
-const terminalResizingDiv = document.getElementById('terminal-resizing');
-// Flag to track if resizing is active
-let isResizing = false;
-// Mouse down event on the pseudo-element to start resizing
-terminalResizingDiv.addEventListener('mousedown', (e) => {
-  isResizing = true;
-  startY = e.clientY;
-  startHeight = terminalDiv.clientHeight;
-  terminalDiv.classList.add('resizing'); // Add the "resizing" class to the pseudo-element
-});
-// Mouse move event to handle resizing
-document.addEventListener('mousemove', (e) => {
-  if (!isResizing) return;
-  const cursorY = e.clientY;
-  const newHeight = startHeight - (cursorY - startY);
-  if (newHeight >= 0) {
-    terminalDiv.style.height = newHeight + 'px';
-  }
-});
-// Mouse up event to stop resizing
-document.addEventListener('mouseup', () => {
-  isResizing = false;
-  terminalDiv.classList.remove('resizing'); // Remove the "resizing" class from the pseudo-element
-});
