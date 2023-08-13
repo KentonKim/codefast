@@ -1,9 +1,10 @@
-const wordBankDiv = document.getElementById('word-bank');
 const bankContainerDiv = document.getElementById('bank-container');
 const cursor = document.getElementById('cursor');
 const codeNumberDiv = document.getElementById('code-numberings');
 const tabOptionsDiv = document.getElementById('tab-options');
 const terminalDiv = document.getElementById('terminal');
+const terminalResizingDiv = document.getElementById('terminal-resizing');
+const wordBankDiv = document.getElementById('word-bank');
 let cursorBlinkDelay = 0;
 let currentLanguage = "python";
 let inputString = `# Time:  O(|V| + |E|)
@@ -144,10 +145,9 @@ class Solution2(object):
             t.join()
         return list(lookup)`
 
-const arr = createHighlightedObjects(inputString, currentLanguage);
-const [TOTAL_LETTER_COUNT, TOTAL_WORD_COUNT] = createWordBoxDOM(arr,wordBankDiv);
+const arrayOfStrigObjects = createHighlightedObjects(inputString, currentLanguage);
+const [TOTAL_LETTER_COUNT, TOTAL_WORD_COUNT] = createWordBoxDOM(arrayOfStrigObjects,wordBankDiv);
 // Initialize starting height and cursor position
-const terminalResizingDiv = document.getElementById('terminal-resizing');
 let terminalStartHeight = terminalDiv.clientHeight;
 let terminalStartY = 0;
 let isTerminalResizing = false;
@@ -160,7 +160,7 @@ let currentLetter = currentWord.childNodes[0];
 cursor.style.height = window.getComputedStyle(currentWord).height;
 
 // ~~~~~~ Event Listeners ~~~~~~~
-document.addEventListener('keydown', startTypingEvent); 
+document.addEventListener('keydown', startGame); 
 // Showing shadow only if the div is scrolled
 bankContainerDiv.addEventListener('scroll', function() {
   if (bankContainerDiv.scrollTop > 0) {
@@ -311,15 +311,21 @@ function createWordBoxDOM(objects, lineHolder) {
     return [letterCount, wordCount];
 }
 
-function startTypingEvent(e) {
+function startGame(e) {
     if (e.key != firstChar) {
         return;
     }
-    startGame();
+
+    resetValues();
+    // clear old and start a new timer
+    clearInterval(timer);
+    timer = setInterval(updateTimer, 1000);
+    setInterval(() => {
+    animateCursorblink();
+    }, 530);
     letterInputEvent(e);
     document.addEventListener('keydown', letterInputEvent);
-    document.removeEventListener(firstChar, startTypingEvent);
-    return;
+    document.removeEventListener(firstChar, startGame);
 }
 
 function letterInputEvent(e) {
@@ -542,15 +548,7 @@ let current_quote = "";
 let quoteNo = 0;
 let timer = null;
 
-function startGame() {
-    resetValues();
-    setInterval(() => {
-    animateCursorblink();
-    }, 530);
-    // clear old and start a new timer
-    clearInterval(timer);
-    timer = setInterval(updateTimer, 1000);
-}
+
   
 function resetValues() {
   timeLeft = TIME_LIMIT;

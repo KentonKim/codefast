@@ -270,7 +270,7 @@ header {
   justify-content: center;
 }
 
-#timer-icon, #text-icon {
+#timer-icon, #ruler-icon {
   width: 30px;
 }
 
@@ -301,7 +301,7 @@ header {
 
 #terminal {
   border-top: solid 1px var(--color-unfilled-font);
-  height: 200px;
+  height: 140px;
   overflow-y: auto;
   position: relative;
   padding-left: 10px;
