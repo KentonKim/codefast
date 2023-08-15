@@ -5,145 +5,61 @@ const tabOptionsDiv = document.getElementById('tab-options');
 const terminalDiv = document.getElementById('terminal');
 const terminalResizingDiv = document.getElementById('terminal-resizing');
 const wordBankDiv = document.getElementById('word-bank');
+// Create a MutationObserver instance
+const observer = new MutationObserver(handleMutation);
+observer.observe(terminalDiv, { childList: true });
 let cursorBlinkDelay = 0;
 let currentLanguage = "python";
-let inputString = `# Time:  O(|V| + |E|)
-# Space: O(|V|)
+let inputString = `# Time:  O(nlogn), n is the number of total emails,
+# and the max length of email is 320, p.s. {64}@{255}
+# Space: O(n)
 
-import threading
-import Queue
+import collections
 
+class UnionFind(object):
+    def __init__(self):
+        self.set = []
 
-# """
-# This is HtmlParser's API interface.
-# You should not implement it, or speculate about its implementation
-# """
-class HtmlParser(object):
-   def getUrls(self, url):
-       """
-       :type url: str
-       :rtype List[str]
-       """
-       pass
+    def get_id(self):
+        self.set.append(len(self.set))
+        return len(self.set)-1
+
+    def find_set(self, x):
+        if self.set[x] != x:
+            self.set[x] = self.find_set(self.set[x])  # path compression.
+        return self.set[x]
+
+    def union_set(self, x, y):
+        x_root, y_root = map(self.find_set, (x, y))
+        if x_root != y_root:
+            self.set[min(x_root, y_root)] = max(x_root, y_root)
 
 
 class Solution(object):
-    NUMBER_OF_WORKERS = 8
-    
-    def __init__(self):
-        self.__cv = threading.Condition()
-        self.__q = Queue.Queue()
-
-    def crawl(self, startUrl, htmlParser):
+    def accountsMerge(self, accounts):
         """
-        :type startUrl: str
-        :type htmlParser: HtmlParser
-        :rtype: List[str]
+        :type accounts: List[List[str]]
+        :rtype: List[List[str]]
         """
-        SCHEME = "http://"
-        def hostname(url):
-            pos = url.find('/', len(SCHEME))
-            if pos == -1:
-                return url
-            return url[:pos]
+        union_find = UnionFind()
+        email_to_name = {}
+        email_to_id = {}
+        for account in accounts:
+            name = account[0]
+            for i in xrange(1, len(account)):
+                if account[i] not in email_to_id:
+                    email_to_name[account[i]] = name
+                    email_to_id[account[i]] = union_find.get_id()
+                union_find.union_set(email_to_id[account[1]],
+                                     email_to_id[account[i]])
 
-        def worker(htmlParser, lookup):
-            while True:
-                from_url = self.__q.get()
-                if from_url is None:
-                    break
-                name = hostname(from_url)
-                for to_url in htmlParser.getUrls(from_url):
-                    if name != hostname(to_url):
-                        continue
-                    with self.__cv:
-                        if to_url not in lookup:
-                           lookup.add(to_url)
-                           self.__q.put(to_url)
-                self.__q.task_done()
-
-        workers = []
-        self.__q = Queue.Queue()
-        self.__q.put(startUrl)
-        lookup = set([startUrl])
-        for i in xrange(self.NUMBER_OF_WORKERS):
-            t = threading.Thread(target=worker, args=(htmlParser, lookup))
-            t.start()
-            workers.append(t)
-        self.__q.join()
-        for t in workers:
-            self.__q.put(None)
-        for t in workers:
-            t.join()
-        return list(lookup)
-
-
-# Time:  O(|V| + |E|)
-# Space: O(|V|)
-import threading
-import collections
-
-
-class Solution2(object):
-    NUMBER_OF_WORKERS = 8
-    
-    def __init__(self):
-        self.__cv = threading.Condition()
-        self.__q = collections.deque()
-        self.__working_count = 0
-
-    def crawl(self, startUrl, htmlParser):
-        """
-        :type startUrl: str
-        :type htmlParser: HtmlParser
-        :rtype: List[str]
-        """
-        SCHEME = "http://"
-        def hostname(url):
-            pos = url.find('/', len(SCHEME))
-            if pos == -1:
-                return url
-            return url[:pos]
-
-        def worker(htmlParser, lookup):
-            while True:
-                with self.__cv:
-                    while not self.__q:
-                        self.__cv.wait()
-                    from_url = self.__q.popleft()
-                    if from_url is None:
-                        break
-                    self.__working_count += 1
-                name = hostname(from_url)
-                for to_url in htmlParser.getUrls(from_url):
-                    if name != hostname(to_url):
-                        continue
-                    with self.__cv:
-                        if to_url not in lookup:
-                           lookup.add(to_url)
-                           self.__q.append(to_url)
-                           self.__cv.notifyAll()
-                with self.__cv:
-                    self.__working_count -= 1
-                    if not self.__q and not self.__working_count:
-                        self.__cv.notifyAll()
-
-        workers = []
-        self.__q = collections.deque([startUrl])
-        lookup = set([startUrl])
-        for i in xrange(self.NUMBER_OF_WORKERS):
-            t = threading.Thread(target=worker, args=(htmlParser, lookup))
-            t.start()
-            workers.append(t)
-        with self.__cv:
-            while self.__q or self.__working_count:
-                self.__cv.wait()
-            for i in xrange(self.NUMBER_OF_WORKERS):
-                self.__q.append(None)
-            self.__cv.notifyAll()
-        for t in workers:
-            t.join()
-        return list(lookup)`
+        result = collections.defaultdict(list)
+        for email in email_to_name.keys():
+            result[union_find.find_set(email_to_id[email])].append(email)
+        for emails in result.values():
+            emails.sort()
+        return [[email_to_name[emails[0]]] + emails
+                for emails in result.values()]`
 
 const arrayOfStrigObjects = createHighlightedObjects(inputString, currentLanguage);
 const [TOTAL_LETTER_COUNT, TOTAL_WORD_COUNT] = createWordBoxDOM(arrayOfStrigObjects,wordBankDiv);
@@ -159,6 +75,17 @@ let currentWord = currentLine.childNodes[1];
 let currentLetter = currentWord.childNodes[0];
 cursor.style.height = window.getComputedStyle(currentWord).height;
 
+let TIME_LIMIT = 1060;
+let timeLeft = TIME_LIMIT;
+let timeElapsed = 0;
+let total_errors = 0;
+let errors = 0;
+let accuracy = 0;
+let characterTyped = 0;
+let current_quote = "";
+let quoteNo = 0;
+let timer = null;
+  
 // ~~~~~~ Event Listeners ~~~~~~~
 document.addEventListener('keydown', startGame); 
 // Showing shadow only if the div is scrolled
@@ -168,6 +95,8 @@ bankContainerDiv.addEventListener('scroll', function() {
   } else {
     tabOptionsDiv.classList.remove('bottom-shadow');
   }
+  cursor.classList.add('hidden');
+  updateCursor(currentLetter);
 });
 // Mouse down event on the pseudo-element to start resizing
 terminalResizingDiv.addEventListener('mousedown', (e) => {
@@ -190,7 +119,15 @@ document.addEventListener('mouseup', () => {
   isTerminalResizing = false;
   terminalDiv.classList.remove('resizing'); // Remove the "resizing" class from the pseudo-element
 });
-
+// Mouse enter event for showing scrollbar in terminal
+terminalDiv.addEventListener('mouseenter', () => {
+  terminalDiv.classList.add('show-scrollbar');
+  console.log('showing scrollbar')
+});
+terminalDiv.addEventListener('mouseleave', () => {
+  terminalDiv.classList.remove('show-scrollbar');
+  console.log('hiding scrollbar')
+});
 
 // Takes in a string of code and selected language as a string
 // Returns an array of objects {string, class} 
@@ -220,7 +157,6 @@ function createHighlightedObjects(stringCode, language) {
     const rawArray = hljs.highlight(stringCode, {language: language})._emitter.rootNode.children;
     return returnBaseObject(rawArray, "");
 }
-
 // Takes in an array of objects {string, class}
 // Returns # of letters, # of words 
 function createWordBoxDOM(objects, lineHolder) {
@@ -379,6 +315,8 @@ function letterInput(key) {
         // Display number for new line of code
         currentLine.firstElementChild.classList.remove('hidden');
         currentLine.firstElementChild.firstElementChild.classList.remove('unfilled');
+
+        scrollElement(bankContainerDiv, currentLine);
         return;
     }
 
@@ -424,6 +362,7 @@ function letterInput(key) {
                 currentWord.classList.remove('misspelled');
             }
             updateLetter();
+            scrollElement(bankContainerDiv, currentLine);
         }
 
         if (currentWord.previousElementSibling == null
@@ -499,10 +438,10 @@ function letterInput(key) {
 }
 
 function updateCursor(letter) {
-    const centerDivRect = wordBankDiv.getBoundingClientRect();
+    const centerDivRect = bankContainerDiv.getBoundingClientRect();
     const rect = letter.getBoundingClientRect();
-    let x = rect.left + window.scrollX;
-    let y = rect.top + window.scrollY;
+    let x = rect.left; //+ window.scrollX;
+    let y = rect.top; //+ window.scrollY;
     if (!currentLetter.classList.contains('unfilled')) {
         x += rect.width;
     }
@@ -515,41 +454,13 @@ function updateCursor(letter) {
 } 
 
 function animateCursorblink() {
-    if (cursorBlinkDelay < 1) {
+    if (cursorBlinkDelay < 2) {
         cursorBlinkDelay++;
         return;
     }
     cursor.classList.toggle('hidden');
 }
 
-// Geeks for Geeks code
-let TIME_LIMIT = 1060;
-// selecting required elements
-// let timer_text = document.querySelector(".curr_time");
-// let accuracy_text = document.querySelector(".curr_accuracy");
-// let error_text = document.querySelector(".curr_errors");
-// let cpm_text = document.querySelector(".curr_cpm");
-// let wpm_text = document.querySelector(".curr_wpm");
-// let quote_text = document.querySelector(".quote");
-// let input_area = document.querySelector(".input_area");
-// let restart_btn = document.querySelector(".restart_btn");
-// let cpm_group = document.querySelector(".cpm");
-// let wpm_group = document.querySelector(".wpm");
-// let error_group = document.querySelector(".errors");
-// let accuracy_group = document.querySelector(".accuracy");
-
-let timeLeft = TIME_LIMIT;
-let timeElapsed = 0;
-let total_errors = 0;
-let errors = 0;
-let accuracy = 0;
-let characterTyped = 0;
-let current_quote = "";
-let quoteNo = 0;
-let timer = null;
-
-
-  
 function resetValues() {
   timeLeft = TIME_LIMIT;
   timeElapsed = 0;
@@ -607,4 +518,53 @@ function finishGame() {
     // wpm_group.style.display = "block";
 }
 
-// Geeks for geeks code ends here
+// Function to scroll the container to the bottom
+function scrollToBottom(container) {
+    container.scrollTop = container.scrollHeight;
+}
+
+// Callback function for the MutationObserver
+function handleMutation(mutationsList, observer) {
+    console.log(mutationsList);
+    for (const mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+        // New child element(s) were added, scroll to the bottom
+        scrollToBottom(mutation.target);
+        }
+    }
+}
+
+// Example: Adding a new child div to the container
+function addChildDiv(container) {
+  const newDiv = document.createElement('div');
+  newDiv.textContent = 'New Child Div';
+  container.appendChild(newDiv);
+}
+
+// DEPRECATED 
+// function checkScroll(scrollDiv, childDiv, limitInPercentage, isDown = true, durationInMilliseconds = 100) {
+//     if ((!isDown && element.scrollTop == 0) 
+//     || (isDown && Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) < 1)){
+//         return;
+//     }
+
+//     const scrollRect = scrollDiv.getBoundingClientRect();
+//     const childRect = childDiv.getBoundingClientRect();
+
+//     if (isDown && (childRect.top - scrollRect.top) / scrollRect.height > limitInPercentage) {
+//         scrollElement(scrollDiv, childRect.height, durationInMilliseconds);
+//     }
+//     else if ((childRect.top - scrollRect.top) / scrollRect.height < limitInPercentage) {
+//         scrollElement(scrollDiv, -children.height, durationInMilliseconds);
+//     }
+// }
+
+// Scrolls until the top of the child elemnt is located at the top of the scroll element
+
+function scrollElement(scrollElement, childElement) {
+    const scrollRect = scrollElement.getBoundingClientRect();
+    const childRect = childElement.getBoundingClientRect();
+    const changeInPixel = childRect.top - scrollRect.top; 
+    scrollElement.scrollTop += changeInPixel;
+    return;
+}

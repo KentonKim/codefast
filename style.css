@@ -305,21 +305,44 @@ header {
 
 #terminal {
   border-top: solid 1px var(--color-unfilled-font);
+  position: inherit;
   height: 140px;
-  overflow-y: auto;
+  overflow-y: hidden;
   position: relative;
-  padding-left: 10px;
+  padding-left: 20px;
   flex: none;
-  transition: border-top 0.1s ease;
+  transition: border-top 0.1s ease, overflow-y 0.5 ease;
+}
+
+div::-webkit-scrollbar-thumb {
+  background-color: var(--color-unfilled-font);
+}
+
+
+div::-webkit-scrollbar {
+  width: 12px;
+}
+
+div::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in lch, var(--color-unfilled-font), var(--color-filled-font));
+}
+
+div::-webkit-scrollbar-thumb:active {
+  background-color: var(--color-filled-font);
+}
+
+#terminal.show-scrollbar {
+  overflow-y: auto;
 }
 
 #terminal-resizing {
+  background-color: var(--color-background-grey);
   content: "";
-  position: absolute;
-  top: -8px; /* Adjust this value to control the draggable area's height */
+  position: sticky;
   left: 0;
   right: 0;
-  height: 16px; /* Height of the draggable area */
+  top: 0;
+  height: 8px; /* Height of the draggable area */
   cursor: ns-resize; /* Vertical resize cursor */
   z-index: 99;
   box-sizing: border-box;
@@ -332,10 +355,13 @@ header {
 #terminal-title {
   background-color: var(--color-background-grey);
   text-decoration-line: underline;
-  margin-bottom: 10px;
+  padding-bottom: 10px;
   position: sticky;
-  padding-top: 10px;
-  top: 0px;
+  top: 8px;
+  color: inherit;
+}
+
+#terminal div {
   color: inherit;
 }
 
