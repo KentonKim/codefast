@@ -69,7 +69,9 @@ let terminalStartY = 0;
 let isTerminalResizing = false;
 
 // Second initializations after string loading
-const firstChar = inputString[0];
+const FIRST_CHAR = inputString[0];
+const LINE_HEIGHT = document.querySelector('.line').getBoundingClientRect().height;
+const bankContainerDivRect = bankContainerDiv.getBoundingClientRect();
 let currentLine = document.querySelector('.line');
 let currentWord = currentLine.childNodes[1]; 
 let currentLetter = currentWord.childNodes[0];
@@ -248,7 +250,7 @@ function createWordBoxDOM(objects, lineHolder) {
 }
 
 function startGame(e) {
-    if (e.key != firstChar) {
+    if (e.key != FIRST_CHAR) {
         return;
     }
 
@@ -261,7 +263,7 @@ function startGame(e) {
     }, 530);
     letterInputEvent(e);
     document.addEventListener('keydown', letterInputEvent);
-    document.removeEventListener(firstChar, startGame);
+    document.removeEventListener(FIRST_CHAR, startGame);
 }
 
 function letterInputEvent(e) {
@@ -316,7 +318,7 @@ function letterInput(key) {
         currentLine.firstElementChild.classList.remove('hidden');
         currentLine.firstElementChild.firstElementChild.classList.remove('unfilled');
 
-        scrollElement(bankContainerDiv, currentLine);
+        checkScroll(bankContainerDiv, bankContainerDivRect,currentLine, LINE_HEIGHT, 0.5, true);
         return;
     }
 
@@ -362,7 +364,8 @@ function letterInput(key) {
                 currentWord.classList.remove('misspelled');
             }
             updateLetter();
-            scrollElement(bankContainerDiv, currentLine);
+            checkScroll(bankContainerDiv, bankContainerDivRect,currentLine, LINE_HEIGHT, 0.2, false);
+
         }
 
         if (currentWord.previousElementSibling == null
@@ -541,30 +544,19 @@ function addChildDiv(container) {
   container.appendChild(newDiv);
 }
 
-// DEPRECATED 
-// function checkScroll(scrollDiv, childDiv, limitInPercentage, isDown = true, durationInMilliseconds = 100) {
-//     if ((!isDown && element.scrollTop == 0) 
-//     || (isDown && Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) < 1)){
-//         return;
-//     }
+// Scroll up/down a line depending on if the current line exceeds a midrange of the containers 
+function checkScroll(scrollDiv, scrollRect, lineElement,changeInPixels, limitInPercentage, isDown = true) {
+    if ((!isDown && scrollDiv.scrollTop == 0) 
+    || (isDown && Math.abs(scrollDiv.scrollHeight - scrollDiv.clientHeight - scrollDiv.scrollTop) < 1)){
+        return;
+    }
+    const childRect = lineElement.getBoundingClientRect();
 
-//     const scrollRect = scrollDiv.getBoundingClientRect();
-//     const childRect = childDiv.getBoundingClientRect();
+    if (isDown && (childRect.top - scrollRect.top) / scrollRect.height > limitInPercentage) {
 
-//     if (isDown && (childRect.top - scrollRect.top) / scrollRect.height > limitInPercentage) {
-//         scrollElement(scrollDiv, childRect.height, durationInMilliseconds);
-//     }
-//     else if ((childRect.top - scrollRect.top) / scrollRect.height < limitInPercentage) {
-//         scrollElement(scrollDiv, -children.height, durationInMilliseconds);
-//     }
-// }
-
-// Scrolls until the top of the child elemnt is located at the top of the scroll element
-
-function scrollElement(scrollElement, childElement) {
-    const scrollRect = scrollElement.getBoundingClientRect();
-    const childRect = childElement.getBoundingClientRect();
-    const changeInPixel = childRect.top - scrollRect.top; 
-    scrollElement.scrollTop += changeInPixel;
-    return;
+        scrollDiv.scrollTop += changeInPixels;
+    }
+    else if (!isDown && (childRect.top - scrollRect.top) / scrollRect.height < limitInPercentage) {
+        scrollDiv.scrollTop -= changeInPixels;
+    }
 }
