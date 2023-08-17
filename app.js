@@ -5,6 +5,12 @@ const tabOptionsDiv = document.getElementById('tab-options');
 const terminalDiv = document.getElementById('terminal');
 const terminalResizingDiv = document.getElementById('terminal-resizing');
 const wordBankDiv = document.getElementById('word-bank');
+const resultsDiv = document.getElementById('results');
+const wpmDiv = document.getElementById('wpm');
+const wpmRawDiv = document.getElementById('raw-wpm');
+const cpmDiv = document.getElementById('cpm');
+const cpmRawDiv = document.getElementById('raw-cpm');
+const accuracyDiv = document.getElementById('accuracy');
 // Create a MutationObserver instance
 const observer = new MutationObserver(handleMutation);
 observer.observe(terminalDiv, { childList: true });
@@ -61,14 +67,13 @@ class Solution(object):
         return [[email_to_name[emails[0]]] + emails
                 for emails in result.values()]`
 
-const arrayOfStrigObjects = createHighlightedObjects(inputString, currentLanguage);
-const [TOTAL_LETTER_COUNT, TOTAL_WORD_COUNT] = createWordBoxDOM(arrayOfStrigObjects,wordBankDiv);
 // Initialize starting height and cursor position
 let terminalStartHeight = terminalDiv.clientHeight;
 let terminalStartY = 0;
 let isTerminalResizing = false;
-
 // Second initializations after string loading
+const arrayOfStrigObjects = createHighlightedObjects(inputString, currentLanguage);
+const [TOTAL_LETTER_COUNT, TOTAL_WORD_COUNT] = createWordBoxDOM(arrayOfStrigObjects,wordBankDiv);
 const FIRST_CHAR = inputString[0];
 const LINE_HEIGHT = document.querySelector('.line').getBoundingClientRect().height;
 const bankContainerDivRect = bankContainerDiv.getBoundingClientRect();
@@ -80,13 +85,16 @@ cursor.style.height = window.getComputedStyle(currentWord).height;
 let TIME_LIMIT = 1060;
 let timeLeft = TIME_LIMIT;
 let timeElapsed = 0;
-let total_errors = 0;
-let errors = 0;
-let accuracy = 0;
-let characterTyped = 0;
-let current_quote = "";
-let quoteNo = 0;
 let timer = null;
+let accuracy = 0;
+
+let charactersCorrect = 0;
+let charactersTyped = 0;
+let charactersExcess = 0;
+let charactersSkipped = 0;
+let charactersCorrectArray = [];
+let charactersTypedArray = [];
+
   
 // ~~~~~~ Event Listeners ~~~~~~~
 document.addEventListener('keydown', startGame); 
@@ -124,11 +132,9 @@ document.addEventListener('mouseup', () => {
 // Mouse enter event for showing scrollbar in terminal
 terminalDiv.addEventListener('mouseenter', () => {
   terminalDiv.classList.add('show-scrollbar');
-  console.log('showing scrollbar')
 });
 terminalDiv.addEventListener('mouseleave', () => {
   terminalDiv.classList.remove('show-scrollbar');
-  console.log('hiding scrollbar')
 });
 
 // Takes in a string of code and selected language as a string
@@ -383,55 +389,61 @@ function letterInput(key) {
 
     if (key == "Enter") {
         moveToNextLine();
+        charactersTyped++;
+        charactersCorrect++;
     }
     else if (key == " ") {
         moveToNextWord();
+        charactersTyped++;
+        charactersCorrect++;
     }
     else if (key == "Backspace") {
         if (currentLetter.classList.contains('excess')) {
             currentLetter = currentLetter.previousElementSibling;
             currentLetter.nextElementSibling.remove();
+            charactersTyped--;
         }
-        else if (currentLetter.classList.contains('unfilled')) {
-            if (currentLetter.previousElementSibling == null) {
+        else if (currentLetter.classList.contains('unfilled') && (currentLetter.previousElementSibling == null)) {
                 moveToPreviousWord();
             }
-            else {
-                currentLetter = currentLetter.previousElementSibling;
-                currentLetter.classList.add('unfilled');
-                currentLetter.classList.remove('incorrect');
-                currentLetter.classList.remove('delaySyntax');
-            }
-        }
         else {
+            if (currentLetter.classList.contains('unfilled')) {
+                currentLetter = currentLetter.previousElementSibling;
+            }
+            if (!currentLetter.classList.contains('incorrect')) { // Backspacing a correct word
+                charactersCorrect--;
+            }
             currentLetter.classList.add('unfilled');
             currentLetter.classList.remove('incorrect');
             currentLetter.classList.remove('delaySyntax');
+            charactersTyped--;
         }
     }
     else { 
-        // current letter is filled
-        if (!currentLetter.classList.contains('unfilled')) {
-            // create excess letter
-            if (currentLetter.nextElementSibling == null) {
-                let newletter = document.createElement('letter');
-                newletter.classList.add('excess');
-                newletter.textContent = key;
-                currentWord.appendChild(newletter);
-                currentLetter = currentLetter.nextElementSibling;
-            }
-            else {
-                currentLetter = currentLetter.nextElementSibling;
-            }
-        }
-        if (key == currentLetter.textContent) {
-            currentLetter.classList.remove('unfilled');
-            currentLetter.classList.add('delaySyntax');
+        // Current letter is filled and is at the end of the word
+        if (!currentLetter.classList.contains('unfilled')
+        && (currentLetter.nextElementSibling == null)) {
+            let newletter = document.createElement('letter');
+            newletter.classList.add('excess');
+            newletter.textContent = key;
+            currentWord.appendChild(newletter);
+            currentLetter = currentLetter.nextElementSibling;
         }
         else {
-            currentLetter.classList.remove('unfilled');
-            currentLetter.classList.add('incorrect');
+            if (!currentLetter.classList.contains('unfilled')) {
+                currentLetter = currentLetter.nextElementSibling;
+            }
+            if (key == currentLetter.textContent) { // Correct character typed
+                currentLetter.classList.remove('unfilled');
+                currentLetter.classList.add('delaySyntax');
+                charactersCorrect++;
+            }
+            else { // Incorrect character typed
+                currentLetter.classList.remove('unfilled');
+                currentLetter.classList.add('incorrect');
+            }
         }
+        charactersTyped++;
     }
 
     cursor.classList.remove('hidden');
@@ -465,15 +477,18 @@ function animateCursorblink() {
 }
 
 function resetValues() {
-  timeLeft = TIME_LIMIT;
-  timeElapsed = 0;
-  errors = 0;
-  total_errors = 0;
-  accuracy = 0;
-  characterTyped = 0;
-  quoteNo = 0;
-  document.removeEventListener('keydown', letterInputEvent);
-  
+    TIME_LIMIT = 60;
+    timeLeft = TIME_LIMIT;
+    timeElapsed = 0;
+    timer = null;
+    accuracy = 0;
+    charactersCorrect = 0;
+    charactersTyped = 0;
+    charactersExcess = 0;
+    charactersSkipped = 0;
+    charactersCorrectArray = [];
+    charactersTypedArray = [];
+
 //   accuracy_text.textContent = 100;
 //   timer_text.textContent = timeLeft + 's';
 //   error_text.textContent = 0;
@@ -490,6 +505,10 @@ function updateTimer() {
     timeElapsed++;
     // update the timer text
     // timer_text.textContent = timeLeft + "s";
+    charactersCorrectArray.push(charactersCorrect);
+    charactersTypedArray.push(charactersTyped);
+    console.log(`characters correct: ${charactersCorrect}`);
+    console.log(`characters typed: ${charactersTyped}`);
   }
   else {
     // finish the game
@@ -500,18 +519,22 @@ function updateTimer() {
 function finishGame() {
     // stop the timer
     clearInterval(timer);
+    clearInterval(animateCursorblink)
     console.log('60 seconds has passed');
     // disable the input area
     document.removeEventListener('keydown', letterInputEvent);
+    document.addEventListener('keydown', startGame);
     // show finishing text
     // quote_text.textContent = "Click on restart to start a new game.";
     // display restart button
     // restart_btn.style.display = "block";
     
     // calculate cpm and wpm
-    cpm = Math.round(((characterTyped / timeElapsed) * 60));
-    wpm = Math.round((((characterTyped / 5) / timeElapsed) * 60));
-    
+    const charPerMin = Math.round(((charactersCorrect / timeElapsed) * 60));
+    const charPerMinRaw = Math.round(((charactersTyped / timeElapsed) * 60));
+    const wordsPerMin = Math.round((((charactersCorrect / 5) / timeElapsed) * 60));
+    const wordsPerMinRaw = Math.round((((charactersTyped / 5) / timeElapsed) * 60));
+   
     // update cpm and wpm text
     // cpm_text.textContent = cpm;
     // wpm_text.textContent = wpm;
@@ -519,6 +542,17 @@ function finishGame() {
     // display the cpm and wpm
     // cpm_group.style.display = "block";
     // wpm_group.style.display = "block";
+    displayResults(charPerMin, charPerMinRaw, wordsPerMin, wordsPerMinRaw);
+}
+
+function displayResults(cpm, cpmr, wpm, wpmr) {
+    resultsDiv.classList.remove('invisible');
+    cpmDiv.textContent = `Char Per Min: ${cpm}`;
+    cpmRawDiv.textContent = `Raw Char Per Min: ${cpmr}`;
+    wpmDiv.textContent = `Words Per Min ${wpm}`;
+    wpmRawDiv.textContent = `Raw Words Per Min ${wpmr}`;
+    accuracyDiv.textContent = `Accuracy: ${Math.round(10000*(cpm/cpmr))/100}`
+    return;
 }
 
 // Function to scroll the container to the bottom

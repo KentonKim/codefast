@@ -200,6 +200,23 @@ body {
   align-items: stretch
 }
 
+#results {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 50%;
+  height: 50%;
+  margin-top: -15%;
+  margin-left: -25%;
+  background-color: var(--color-background-dark-grey);
+  border-radius: 5px;
+  z-index: 99;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Sidebar Attributes */
 #sidebar {
   position: fixed;
@@ -391,6 +408,10 @@ div:focus {
 
 .selected-wrapper {
   background-color: var(--color-background-grey);
+}
+
+#results.invisible {
+  display: none;
 }
 
 .hidden {
