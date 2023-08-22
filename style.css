@@ -247,7 +247,7 @@ body {
   margin: 10px;
 }
 
-.selectable-icon:hover {
+.icon-wrapper:hover .selectable-icon{
   filter: invert(100%);
 }
 

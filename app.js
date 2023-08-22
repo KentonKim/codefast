@@ -74,15 +74,15 @@ let isTerminalResizing = false;
 // Second initializations after string loading
 const arrayOfStrigObjects = createHighlightedObjects(inputString, currentLanguage);
 const [TOTAL_LETTER_COUNT, TOTAL_WORD_COUNT] = createWordBoxDOM(arrayOfStrigObjects,wordBankDiv);
-const FIRST_CHAR = inputString[0];
 const LINE_HEIGHT = document.querySelector('.line').getBoundingClientRect().height;
 const bankContainerDivRect = bankContainerDiv.getBoundingClientRect();
+let FIRST_CHAR = inputString[0];
 let currentLine = document.querySelector('.line');
 let currentWord = currentLine.childNodes[1]; 
 let currentLetter = currentWord.childNodes[0];
 cursor.style.height = window.getComputedStyle(currentWord).height;
 
-let TIME_LIMIT = 1060;
+let TIME_LIMIT = 10;
 let timeLeft = TIME_LIMIT;
 let timeElapsed = 0;
 let timer = null;
@@ -97,45 +97,52 @@ let charactersTypedArray = [];
 
   
 // ~~~~~~ Event Listeners ~~~~~~~
-document.addEventListener('keydown', startGame); 
-// Showing shadow only if the div is scrolled
-bankContainerDiv.addEventListener('scroll', function() {
-  if (bankContainerDiv.scrollTop > 0) {
-    tabOptionsDiv.classList.add('bottom-shadow');
-  } else {
-    tabOptionsDiv.classList.remove('bottom-shadow');
-  }
-  cursor.classList.add('hidden');
-  updateCursor(currentLetter);
-});
-// Mouse down event on the pseudo-element to start resizing
-terminalResizingDiv.addEventListener('mousedown', (e) => {
-  isTerminalResizing = true;
-  terminalStartY = e.clientY;
-  terminalStartHeight = terminalDiv.clientHeight;
-  terminalDiv.classList.add('resizing'); // Add the "resizing" class to the pseudo-element
-});
-// Mouse move event to handle terminal resizing
-document.addEventListener('mousemove', (e) => {
-  if (!isTerminalResizing) return;
-  const cursorY = e.clientY;
-  const newHeight = terminalStartHeight - (cursorY - terminalStartY);
-  if (newHeight >= 0) {
-    terminalDiv.style.height = newHeight + 'px';
-  }
-});
-// Mouse up event to stop terminal resizing
-document.addEventListener('mouseup', () => {
-  isTerminalResizing = false;
-  terminalDiv.classList.remove('resizing'); // Remove the "resizing" class from the pseudo-element
-});
-// Mouse enter event for showing scrollbar in terminal
-terminalDiv.addEventListener('mouseenter', () => {
-  terminalDiv.classList.add('show-scrollbar');
-});
-terminalDiv.addEventListener('mouseleave', () => {
-  terminalDiv.classList.remove('show-scrollbar');
-});
+initializeEventListeners();
+
+
+
+
+function initializeEventListeners() {
+    document.addEventListener('keydown', startGame); 
+    // Showing shadow only if the div is scrolled
+    bankContainerDiv.addEventListener('scroll', function() {
+    if (bankContainerDiv.scrollTop > 0) {
+        tabOptionsDiv.classList.add('bottom-shadow');
+    } else {
+        tabOptionsDiv.classList.remove('bottom-shadow');
+    }
+    cursor.classList.add('hidden');
+    updateCursor(currentLetter);
+    });
+    // Mouse down event on the pseudo-element to start resizing
+    terminalResizingDiv.addEventListener('mousedown', (e) => {
+    isTerminalResizing = true;
+    terminalStartY = e.clientY;
+    terminalStartHeight = terminalDiv.clientHeight;
+    terminalDiv.classList.add('resizing'); // Add the "resizing" class to the pseudo-element
+    });
+    // Mouse move event to handle terminal resizing
+    document.addEventListener('mousemove', (e) => {
+    if (!isTerminalResizing) return;
+    const cursorY = e.clientY;
+    const newHeight = terminalStartHeight - (cursorY - terminalStartY);
+    if (newHeight >= 0) {
+        terminalDiv.style.height = newHeight + 'px';
+    }
+    });
+    // Mouse up event to stop terminal resizing
+    document.addEventListener('mouseup', () => {
+    isTerminalResizing = false;
+    terminalDiv.classList.remove('resizing'); // Remove the "resizing" class from the pseudo-element
+    });
+    // Mouse enter event for showing scrollbar in terminal
+    terminalDiv.addEventListener('mouseenter', () => {
+    terminalDiv.classList.add('show-scrollbar');
+    });
+    terminalDiv.addEventListener('mouseleave', () => {
+    terminalDiv.classList.remove('show-scrollbar');
+    });
+}
 
 // Takes in a string of code and selected language as a string
 // Returns an array of objects {string, class} 
@@ -269,7 +276,9 @@ function startGame(e) {
     }, 530);
     letterInputEvent(e);
     document.addEventListener('keydown', letterInputEvent);
-    document.removeEventListener(FIRST_CHAR, startGame);
+    document.removeEventListener('keydown', startGame);
+
+    displayTerminal("Starting Test");
 }
 
 function letterInputEvent(e) {
@@ -477,7 +486,6 @@ function animateCursorblink() {
 }
 
 function resetValues() {
-    TIME_LIMIT = 60;
     timeLeft = TIME_LIMIT;
     timeElapsed = 0;
     timer = null;
@@ -495,6 +503,7 @@ function resetValues() {
 //   restart_btn.style.display = "none";
 //   cpm_group.style.display = "none";
 //   wpm_group.style.display = "none";
+    displayTerminal("Resetting Values");
 }
 
 function updateTimer() {
@@ -517,32 +526,65 @@ function updateTimer() {
 }
 
 function finishGame() {
+    function calculateWPM(word, time) {
+        function isWord(div) {
+            if (div == null || !div.classList.contains('word')) {
+                return false;
+            }
+            return true;
+        }
+
+        let correct = 0;
+        let currWordNum = 0;
+        let currWordDenom = 0;
+
+        for (node of word.childNodes) {
+            currWordDenom++;
+            if (!(node.classList.contains('incorrect')
+            || node.classList.contains('unfilled'))) {
+                currWordNum++;
+            }
+        }
+        correct += currWordNum / currWordDenom;
+
+        while (!(word.parentElement.previousElementSibling == null
+            && !isWord(word.previousElementSibling))) {
+                if (isWord(word.previousElementSibling)) {
+                    word = word.previousElementSibling;
+                }
+                else {
+                    word = word.parentNode.previousElementSibling.lastElementChild;
+                }
+                if (!word.classList.contains('misspelled')) {
+                    correct++;
+                }
+            }
+             
+        return Math.round((correct / time) * 60);
+    }
+
     // stop the timer
     clearInterval(timer);
     clearInterval(animateCursorblink)
     console.log('60 seconds has passed');
     // disable the input area
     document.removeEventListener('keydown', letterInputEvent);
+    FIRST_CHAR = null;
     document.addEventListener('keydown', startGame);
-    // show finishing text
-    // quote_text.textContent = "Click on restart to start a new game.";
-    // display restart button
-    // restart_btn.style.display = "block";
     
     // calculate cpm and wpm
     const charPerMin = Math.round(((charactersCorrect / timeElapsed) * 60));
     const charPerMinRaw = Math.round(((charactersTyped / timeElapsed) * 60));
-    const wordsPerMin = Math.round((((charactersCorrect / 5) / timeElapsed) * 60));
+    // const wordsPerMin = Math.round((((charactersCorrect / 5) / timeElapsed) * 60));
     const wordsPerMinRaw = Math.round((((charactersTyped / 5) / timeElapsed) * 60));
+
+    console.log('wpm to be calculated');
+    const wordsPerMin = calculateWPM(currentWord, timeElapsed);
+
+    console.log('wpm calculated');
    
-    // update cpm and wpm text
-    // cpm_text.textContent = cpm;
-    // wpm_text.textContent = wpm;
-    
-    // display the cpm and wpm
-    // cpm_group.style.display = "block";
-    // wpm_group.style.display = "block";
     displayResults(charPerMin, charPerMinRaw, wordsPerMin, wordsPerMinRaw);
+    displayTerminal("Test has been completed");
 }
 
 function displayResults(cpm, cpmr, wpm, wpmr) {
@@ -593,4 +635,17 @@ function checkScroll(scrollDiv, scrollRect, lineElement,changeInPixels, limitInP
     else if (!isDown && (childRect.top - scrollRect.top) / scrollRect.height < limitInPercentage) {
         scrollDiv.scrollTop -= changeInPixels;
     }
+}
+
+function displayTerminal(string) {
+    let newline = document.createElement('div');
+    newline.classList.add('terminal-line');
+    newline.textContent = string;
+    terminalDiv.appendChild(newline);
+    return;
+}
+
+
+function getGamemode() {
+
 }
