@@ -82,7 +82,7 @@ let currentWord = currentLine.childNodes[1];
 let currentLetter = currentWord.childNodes[0];
 cursor.style.height = window.getComputedStyle(currentWord).height;
 
-let TIME_LIMIT = 10;
+let TIME_LIMIT = 60;
 let timeLeft = TIME_LIMIT;
 let timeElapsed = 0;
 let timer = null;
