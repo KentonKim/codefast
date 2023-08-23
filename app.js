@@ -1,20 +1,30 @@
-const bankContainerDiv = document.getElementById('bank-container');
-const cursor = document.getElementById('cursor');
-const codeNumberDiv = document.getElementById('code-numberings');
-const tabOptionsDiv = document.getElementById('tab-options');
+// Tab divs
+const tabDiv = document.getElementById('tab');
+const timerOptionsDiv = document.getElementById('timer-options');
+const textOptionsDiv = document.getElementById('text-options');
+const timer30Div = document.getElementById('timer30');
+const timer60Div = document.getElementById('timer60');
+const timer120Div = document.getElementById('timer120');
+const textShortDiv = document.getElementById('textS');
+const textMedDiv = document.getElementById('textM');
+const textLongDiv = document.getElementById('textL');
+// Terminal Divs
 const terminalDiv = document.getElementById('terminal');
 const terminalResizingDiv = document.getElementById('terminal-resizing');
-const wordBankDiv = document.getElementById('word-bank');
+// Results Div
 const resultsDiv = document.getElementById('results');
 const wpmDiv = document.getElementById('wpm');
 const wpmRawDiv = document.getElementById('raw-wpm');
 const cpmDiv = document.getElementById('cpm');
 const cpmRawDiv = document.getElementById('raw-cpm');
 const accuracyDiv = document.getElementById('accuracy');
+// Word Bank divs
+const bankContainerDiv = document.getElementById('bank-container');
+const wordBankDiv = document.getElementById('word-bank');
+const cursor = document.getElementById('cursor');
 // Create a MutationObserver instance
 const observer = new MutationObserver(handleMutation);
 observer.observe(terminalDiv, { childList: true });
-let cursorBlinkDelay = 0;
 let currentLanguage = "python";
 let inputString = `# Time:  O(nlogn), n is the number of total emails,
 # and the max length of email is 320, p.s. {64}@{255}
@@ -67,7 +77,7 @@ class Solution(object):
         return [[email_to_name[emails[0]]] + emails
                 for emails in result.values()]`
 
-// Initialize starting height and cursor position
+// Initialize starting height 
 let terminalStartHeight = terminalDiv.clientHeight;
 let terminalStartY = 0;
 let isTerminalResizing = false;
@@ -80,7 +90,10 @@ let FIRST_CHAR = inputString[0];
 let currentLine = document.querySelector('.line');
 let currentWord = currentLine.childNodes[1]; 
 let currentLetter = currentWord.childNodes[0];
+let cursorBlinkDelay = 0;
 cursor.style.height = window.getComputedStyle(currentWord).height;
+
+let currentGamemodeDiv = timer60Div;
 
 let TIME_LIMIT = 60;
 let timeLeft = TIME_LIMIT;
@@ -98,18 +111,14 @@ let charactersTypedArray = [];
   
 // ~~~~~~ Event Listeners ~~~~~~~
 initializeEventListeners();
-
-
-
-
 function initializeEventListeners() {
     document.addEventListener('keydown', startGame); 
     // Showing shadow only if the div is scrolled
     bankContainerDiv.addEventListener('scroll', function() {
     if (bankContainerDiv.scrollTop > 0) {
-        tabOptionsDiv.classList.add('bottom-shadow');
+        tab.classList.add('bottom-shadow');
     } else {
-        tabOptionsDiv.classList.remove('bottom-shadow');
+        tab.classList.remove('bottom-shadow');
     }
     cursor.classList.add('hidden');
     updateCursor(currentLetter);
@@ -142,7 +151,34 @@ function initializeEventListeners() {
     terminalDiv.addEventListener('mouseleave', () => {
     terminalDiv.classList.remove('show-scrollbar');
     });
+    timer30Div.addEventListener('mousedown', switchGamemode);
+    timer60Div.addEventListener('mousedown', switchGamemode);
+    timer120Div.addEventListener('mousedown', switchGamemode);
+    textShortDiv.addEventListener('mousedown', switchGamemode);
+    textMedDiv.addEventListener('mousedown', switchGamemode);
+    textLongDiv.addEventListener('mousedown', switchGamemode);
 }
+
+function switchGamemode(e) {
+    if (e.target == currentGamemodeDiv) {
+        return;
+    }
+    currentGamemodeDiv.classList.remove('selected-subtab');
+    currentGamemodeDiv = e.target;
+    currentGamemodeDiv.classList.add('selected-subtab');
+    if (e.target == timer30Div) {
+        TIME_LIMIT = 30;
+    }
+    else if (e.target == timer60Div) {
+        TIME_LIMIT = 60;
+    }
+    else if (e.target == timer120Div) {
+        TIME_LIMIT = 120;
+    }
+
+    console.log(TIME_LIMIT);
+}
+
 
 // Takes in a string of code and selected language as a string
 // Returns an array of objects {string, class} 

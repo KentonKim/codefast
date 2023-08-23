@@ -219,13 +219,13 @@ body {
 
 /* Sidebar Attributes */
 #sidebar {
-  position: fixed;
   height: 100vh;
   background-color: var(--color-background-dark-grey);
   width: var(--sidebar-length);
   display: flex;
   flex-flow: column;
   align-items: center;
+  z-index: 10;
 }
 
 #logo-icon {
@@ -255,18 +255,15 @@ body {
   margin-top: auto;
 }
 
-#gamemode-wrapper {
-  border: 5px solid var(--color-unfilled-font);
-  border-radius: 40px;
-  width: 80%;
-}
-
 main {
-  margin-left: var(--sidebar-length);
   width: 100%;
   display: flex;
   flex-flow: column;
   height: 100vh;
+}
+
+.fixed {
+  position: fixed;
 }
 
 header {
@@ -277,10 +274,10 @@ header {
 
 /* Header (tab) stuff */
 #tab {
-  height: 50px;
+  height: 100px;
   display: flex; 
   align-items: stretch;
-  background-color: var(--color-background-dark-grey);
+  background: linear-gradient(to bottom, var(--color-background-dark-grey) 50%, var(--color-background-grey) 50%);
 }
 
 #tab div {
@@ -295,13 +292,6 @@ header {
   width: 30px;
 }
 
-#tab-options {
-  height: 40px;
-  display: flex;
-  align-items: stretch;
-  background-color: var(--color-background-grey);
-}
-
 .bottom-shadow {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 1);
 }
@@ -311,6 +301,15 @@ header {
   justify-content: space-around;
   align-items: center;
   width: var(--tab-width);
+}
+
+#tab div:hover, #timer-options div:hover, #text-options div:hover{
+  color: var(--color-filled-font);
+}
+
+#tab div:active, #timer-options div:active, #text-options div:active{
+  color: var(--color-unfilled-font);
+  text-shadow: none;
 }
 
 /* Main stuff */
@@ -404,6 +403,11 @@ div:focus {
 .selected-tab {
   background-color: var(--color-background-grey);
   color: var(--color-filled-font);
+}
+
+.selected-subtab {
+  color: var(--color-filled-font);
+  text-shadow:0px 0px 5px var(--color-yellow);
 }
 
 .selected-wrapper {

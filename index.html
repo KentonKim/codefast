@@ -44,28 +44,25 @@
 
     <main>
         <header class="prevent-selection">
-            <div id="tab">
+            <div id="tab" class="bottom-shadow">
                 <div id="timer-tab" class="selected-tab">
                     <img src="icons/timer.svg" alt="timer" id="timer-icon" class="icon"> 
                     Timed
+                    <div id="timer-options">
+                        <div id="timer30">30</div>
+                        <div id="timer60" class="selected-subtab">60</div>
+                        <div id="timer120">120</div>
+                    </div>
                 </div>
                 <div id="ruler-tab">
                     <img src="icons/ruler.svg" alt="ruler icon" id="ruler-icon" class="icon"> 
                     Length
+                    <div id="text-options">
+                        <div id="textS">Short</div>
+                        <div id="textM">Med</div>
+                        <div id="textL">Long</div>
+                    </div>
                 </div>
-            </div>
-            <div id="tab-options">
-                <div id="timer-options">
-                    <div id="timer1">30</div>
-                    <div id="timer2">60</div>
-                    <div id="timer3">120</div>
-                </div>
-                <div id="text-options">
-                    <div id="text1">Short</div>
-                    <div id="text2">Med</div>
-                    <div id="text3">Long</div>
-                </div>
-            </div>
         </header>
         <div id="bank-container">
             <div id="cursor" class="hidden"></div>
