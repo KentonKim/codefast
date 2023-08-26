@@ -277,14 +277,14 @@ header {
   height: 100px;
   display: flex; 
   align-items: stretch;
-  background: linear-gradient(to bottom, var(--color-background-dark-grey) 50%, var(--color-background-grey) 50%);
+  background: linear-gradient(to bottom, var(--color-background-dark-grey) 60%, var(--color-background-grey) 40%);
 }
 
-#tab div {
+#tab>div {
   width: var(--tab-width);
-  border-right: solid 1px black;
   display: flex;
-  align-items: center;
+  flex-flow: column;
+  align-items: stretch;
   justify-content: center;
 }
 
@@ -296,21 +296,46 @@ header {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 1);
 }
 
+#timer-tab, #text-tab{
+  flex: 6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 #timer-options, #text-options {
   display: flex;
+  flex-flow: row;
+  flex: 4;
   justify-content: space-around;
   align-items: center;
   width: var(--tab-width);
 }
 
-#tab div:hover, #timer-options div:hover, #text-options div:hover{
+#text-tab:hover, #timer-tab:hover, #timer-options>div:hover, #text-options>div:hover{
+  cursor: pointer;
   color: var(--color-filled-font);
 }
 
-#tab div:active, #timer-options div:active, #text-options div:active{
+#text-tab:active, #timer-tab:active, #timer-options>div:active, #text-options>div:active {
   color: var(--color-unfilled-font);
   text-shadow: none;
 }
+
+.selected-tab {
+  background-color: var(--color-background-grey);
+  color: var(--color-filled-font);
+}
+
+.selected-subtab {
+  color: var(--color-filled-font);
+  text-shadow:0px 0px 5px var(--color-yellow);
+}
+
+.selected-wrapper {
+  background-color: var(--color-background-grey);
+}
+
 
 /* Main stuff */
 #bank-container{
@@ -328,23 +353,6 @@ header {
   padding-left: 20px;
   flex: none;
   transition: border-top 0.1s ease, overflow-y 0.5 ease;
-}
-
-div::-webkit-scrollbar-thumb {
-  background-color: var(--color-unfilled-font);
-}
-
-
-div::-webkit-scrollbar {
-  width: 12px;
-}
-
-div::-webkit-scrollbar-thumb:hover {
-  background-color: color-mix(in lch, var(--color-unfilled-font), var(--color-filled-font));
-}
-
-div::-webkit-scrollbar-thumb:active {
-  background-color: var(--color-filled-font);
 }
 
 #terminal.show-scrollbar {
@@ -381,6 +389,23 @@ div::-webkit-scrollbar-thumb:active {
   color: inherit;
 }
 
+div::-webkit-scrollbar-thumb {
+  background-color: var(--color-unfilled-font);
+}
+
+
+div::-webkit-scrollbar {
+  width: 12px;
+}
+
+div::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in lch, var(--color-unfilled-font), var(--color-filled-font));
+}
+
+div::-webkit-scrollbar-thumb:active {
+  background-color: var(--color-filled-font);
+}
+
 #cursor {
   background-color: var(--color-dark-blue);
   border: var(--color-dark-blue) solid 1px;
@@ -400,20 +425,6 @@ div:focus {
   -ms-user-select: none; /* For Internet Explorer/Edge */
 }
 
-.selected-tab {
-  background-color: var(--color-background-grey);
-  color: var(--color-filled-font);
-}
-
-.selected-subtab {
-  color: var(--color-filled-font);
-  text-shadow:0px 0px 5px var(--color-yellow);
-}
-
-.selected-wrapper {
-  background-color: var(--color-background-grey);
-}
-
 #results.invisible {
   display: none;
 }
@@ -421,7 +432,6 @@ div:focus {
 .hidden {
     visibility: hidden;
 }
-
 
 /* Coding Typing Test Attributes*/
 .line {

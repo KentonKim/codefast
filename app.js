@@ -151,12 +151,12 @@ function initializeEventListeners() {
     terminalDiv.addEventListener('mouseleave', () => {
     terminalDiv.classList.remove('show-scrollbar');
     });
-    timer30Div.addEventListener('mousedown', switchGamemode);
-    timer60Div.addEventListener('mousedown', switchGamemode);
-    timer120Div.addEventListener('mousedown', switchGamemode);
-    textShortDiv.addEventListener('mousedown', switchGamemode);
-    textMedDiv.addEventListener('mousedown', switchGamemode);
-    textLongDiv.addEventListener('mousedown', switchGamemode);
+    timer30Div.addEventListener('mouseup', switchGamemode);
+    timer60Div.addEventListener('mouseup', switchGamemode);
+    timer120Div.addEventListener('mouseup', switchGamemode);
+    textShortDiv.addEventListener('mouseup', switchGamemode);
+    textMedDiv.addEventListener('mouseup', switchGamemode);
+    textLongDiv.addEventListener('mouseup', switchGamemode);
 }
 
 function switchGamemode(e) {
@@ -167,6 +167,7 @@ function switchGamemode(e) {
     currentGamemodeDiv = e.target;
     currentGamemodeDiv.classList.add('selected-subtab');
     if (e.target == timer30Div) {
+        
         TIME_LIMIT = 30;
     }
     else if (e.target == timer60Div) {
