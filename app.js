@@ -365,7 +365,7 @@ function startGame(e) {
     letterInputEvent(e);
     document.addEventListener('keydown', letterInputEvent);
     document.removeEventListener('keydown', startGame);
-
+    displayTerminal('Starting test')
     tabDiv.style.transform = "translateY(-100%)";
 }
 
@@ -585,13 +585,7 @@ function resetValues() {
     charactersCorrectArray = [];
     charactersTypedArray = [];
 
-//   accuracy_text.textContent = 100;
-//   timer_text.textContent = timeLeft + 's';
-//   error_text.textContent = 0;
-//   restart_btn.style.display = "none";
-//   cpm_group.style.display = "none";
-//   wpm_group.style.display = "none";
-    displayTerminal("> Resetting Values");
+    displayTerminal("Resetting Values");
 }
 
 function updateTimer() {
@@ -604,8 +598,9 @@ function updateTimer() {
     // timer_text.textContent = timeLeft + "s";
     charactersCorrectArray.push(charactersCorrect);
     charactersTypedArray.push(charactersTyped);
-    console.log(`characters correct: ${charactersCorrect}`);
-    console.log(`characters typed: ${charactersTyped}`);
+    if (currentGamemodeDiv == timerGameDiv) {
+        displayTerminal(timeLeft.toString());
+    }
   }
   else {
     // finish the game
@@ -653,8 +648,7 @@ function finishGame() {
 
     // stop the timer
     clearInterval(timer);
-    clearInterval(animateCursorblink)
-    console.log('60 seconds has passed');
+    clearInterval(animateCursorblink);
     // disable the input area
     document.removeEventListener('keydown', letterInputEvent);
     FIRST_CHAR = null;
@@ -668,7 +662,7 @@ function finishGame() {
     const wordsPerMin = calculateWPM(currentWord, timeElapsed);
    
     displayResults(charPerMin, charPerMinRaw, wordsPerMin, wordsPerMinRaw);
-    displayTerminal("> Test has been completed");
+    displayTerminal("Test has been completed");
 }
 
 function displayResults(cpm, cpmr, wpm, wpmr) {
@@ -724,7 +718,7 @@ function checkScroll(scrollDiv, scrollRect, lineElement,changeInPixels, limitInP
 function displayTerminal(string) {
     let newline = document.createElement('div');
     newline.classList.add('terminal-line');
-    newline.textContent = string;
+    newline.textContent = "> " + string;
     terminalDiv.appendChild(newline);
     return;
 }

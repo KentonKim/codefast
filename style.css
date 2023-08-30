@@ -187,8 +187,8 @@ template {
 }
 
 html {
-    scroll-behavior: smooth;
-    height: 100%;
+  overflow: hidden;
+  height: 100%;
 }
 
 body {
@@ -380,10 +380,11 @@ header {
   height: 140px;
   overflow-y: hidden;
   position: relative;
-  padding-left: 20px;
   flex: none;
   transition: border-top 0.1s ease, overflow-y 0.5 ease;
+  padding-left: 20px;
 }
+
 
 #terminal.show-scrollbar {
   overflow-y: auto;
