@@ -1,7 +1,10 @@
 // Tab divs
+const headerDiv = document.getElementById('header');
 const tabDiv = document.getElementById('tab');
 const timerOptionsDiv = document.getElementById('timer-options');
 const textOptionsDiv = document.getElementById('text-options');
+const timerGameDiv = document.getElementById('timer-tab');
+const textGameDiv = document.getElementById('text-tab');
 const timer30Div = document.getElementById('timer30');
 const timer60Div = document.getElementById('timer60');
 const timer120Div = document.getElementById('timer120');
@@ -82,8 +85,7 @@ let terminalStartHeight = terminalDiv.clientHeight;
 let terminalStartY = 0;
 let isTerminalResizing = false;
 // Second initializations after string loading
-const arrayOfStrigObjects = createHighlightedObjects(inputString, currentLanguage);
-const [TOTAL_LETTER_COUNT, TOTAL_WORD_COUNT] = createWordBoxDOM(arrayOfStrigObjects,wordBankDiv);
+implementString(inputString);
 const LINE_HEIGHT = document.querySelector('.line').getBoundingClientRect().height;
 const bankContainerDivRect = bankContainerDiv.getBoundingClientRect();
 let FIRST_CHAR = inputString[0];
@@ -93,7 +95,8 @@ let currentLetter = currentWord.childNodes[0];
 let cursorBlinkDelay = 0;
 cursor.style.height = window.getComputedStyle(currentWord).height;
 
-let currentGamemodeDiv = timer60Div;
+let gamemodeParamDiv = timer60Div;
+let currentGamemodeDiv = timerGameDiv;
 
 let TIME_LIMIT = 60;
 let timeLeft = TIME_LIMIT;
@@ -108,11 +111,12 @@ let charactersSkipped = 0;
 let charactersCorrectArray = [];
 let charactersTypedArray = [];
 
-  
+
+
 // ~~~~~~ Event Listeners ~~~~~~~
-initializeEventListeners();
-function initializeEventListeners() {
-    document.addEventListener('keydown', startGame); 
+initializeUtilityEventListeners();
+document.addEventListener('keydown', startGame); 
+function initializeUtilityEventListeners() {
     // Showing shadow only if the div is scrolled
     bankContainerDiv.addEventListener('scroll', function() {
     if (bankContainerDiv.scrollTop > 0) {
@@ -151,153 +155,200 @@ function initializeEventListeners() {
     terminalDiv.addEventListener('mouseleave', () => {
     terminalDiv.classList.remove('show-scrollbar');
     });
+    enableSwitchGamemode();    
+}
+
+function enableSwitchGamemode() {
+    function switchGamemode(e) {
+        if (e.target == gamemodeParamDiv || e.target == currentGamemodeDiv) {
+            return;
+        }
+        gamemodeParamDiv.classList.remove('selected-subtab');
+        currentGamemodeDiv.classList.remove('selected-tab');
+
+        if (e.target == timerGameDiv) {
+            TIME_LIMIT = 60;
+            gamemodeParamDiv = timer60Div;
+            currentGamemodeDiv = timerGameDiv;
+            gamemodeParamDiv.classList.add('selected-subtab');
+            currentGamemodeDiv.classList.add('selected-tab');
+            return;
+        }
+        if (e.target == textGameDiv) {
+            TIME_LIMIT = 300;
+            gamemodeParamDiv = textMedDiv;
+            currentGamemodeDiv = textGameDiv;
+            gamemodeParamDiv.classList.add('selected-subtab');
+            currentGamemodeDiv.classList.add('selected-tab');
+            return;
+        }
+
+        gamemodeParamDiv= e.target;
+        gamemodeParamDiv.classList.add('selected-subtab');
+        currentGamemodeDiv.classList.remove('selected-tab');
+        switch (e.target) {
+            case timer30Div:
+                TIME_LIMIT = 30;
+                currentGamemodeDiv = timerGameDiv;
+                break;
+            case timer60Div:
+                TIME_LIMIT = 60;
+                currentGamemodeDiv = timerGameDiv;
+                break;
+            case timer120Div:
+                TIME_LIMIT = 120;
+                currentGamemodeDiv = timerGameDiv;
+                break;
+            case textShortDiv:
+                TIME_LIMIT = 300;
+                currentGamemodeDiv = textGameDiv;
+                break;
+            case textMedDiv:
+                TIME_LIMIT = 300;
+                currentGamemodeDiv = textGameDiv;
+                break;
+            case textLongDiv:
+                TIME_LIMIT = 300;
+                currentGamemodeDiv = textGameDiv;
+                break;
+        }
+
+        currentGamemodeDiv.classList.add('selected-tab');
+    }
     timer30Div.addEventListener('mouseup', switchGamemode);
     timer60Div.addEventListener('mouseup', switchGamemode);
     timer120Div.addEventListener('mouseup', switchGamemode);
     textShortDiv.addEventListener('mouseup', switchGamemode);
     textMedDiv.addEventListener('mouseup', switchGamemode);
     textLongDiv.addEventListener('mouseup', switchGamemode);
+    timerGameDiv.addEventListener('mouseup', switchGamemode);
+    textGameDiv.addEventListener('mouseup', switchGamemode);
 }
 
-function switchGamemode(e) {
-    if (e.target == currentGamemodeDiv) {
-        return;
+function implementString(string) {
+    function createHighlightedObjects(stringCode, language) {
+        if (stringCode.length === 0) {
+            console.log('String code is empty. Try another string.');
+            return;
+        }
+        // Takes in array that may have string or objects as elements
+        // If string, creates an object with that string and parent class
+        // Else, makes a recursive call to the children of the elements
+        function returnBaseObject(arrayOfObjects, parentClass) {
+            let array = [];
+            for (object of arrayOfObjects) {
+                if (typeof(object) == "string") {
+                    if (parentClass != '' && !parentClass.startsWith('hljs-')) {
+                        parentClass = "hljs-".concat(parentClass);
+                    }
+                    array.push({string:object, scope:parentClass.replace(/\./g, " ")});
+                }
+                else {
+                    array.push(...returnBaseObject(object.children, object.scope));
+                }
+            }
+            return array;
+        }
+        const rawArray = hljs.highlight(stringCode, {language: language})._emitter.rootNode.children;
+        return returnBaseObject(rawArray, "");
     }
-    currentGamemodeDiv.classList.remove('selected-subtab');
-    currentGamemodeDiv = e.target;
-    currentGamemodeDiv.classList.add('selected-subtab');
-    if (e.target == timer30Div) {
-        
-        TIME_LIMIT = 30;
-    }
-    else if (e.target == timer60Div) {
-        TIME_LIMIT = 60;
-    }
-    else if (e.target == timer120Div) {
-        TIME_LIMIT = 120;
+    // Takes in an array of objects {string, class}
+    // Returns # of letters, # of words 
+    function createWordBoxDOM(objects, lineHolder) {
+        const regexTestForNonSpace = /[^\s]/;
+        const regexTestForSpace = / /;
+        const regexTestForEnter = /|\n|/;
+        let lineCount = 1;
+        let wordCount = 0;
+        let letterCount = 0;
+
+        function createAndAppendNewLetter(character, node, letterClass) {
+            const newLetter = document.createElement('letter');
+            newLetter.className = letterClass;
+            newLetter.classList.add('unfilled');
+            newLetter.textContent = character;
+            node.appendChild(newLetter);
+            return;
+        }
+        function createNewWord() {
+            const newWord = document.createElement('div');
+            newWord.classList.add('word');
+            return newWord;
+        }
+        function createNewLine() {
+            const newLine = document.createElement('div');
+            newLine.classList.add('line');
+            return newLine;
+        }
+        function createAndAppendLineNumber(lineNumber, line) {
+            const newNumber = document.createElement('div');
+            const letter = document.createElement('letter');
+            newNumber.classList.add('numbering');
+            if (lineNumber > 1) {
+                newNumber.classList.add('hidden');
+            }
+            letter.textContent = lineNumber.toString().padStart(3, ' ');
+            newNumber.appendChild(letter);
+            line.appendChild(newNumber);
+            return lineNumber + 1;
+        }
+
+        // For each Object
+        let word = createNewWord(objects[0].scope);
+        let line = createNewLine();
+        line.classList.add('activeLine');
+        lineCount = createAndAppendLineNumber(lineCount, line);
+
+        for (let i = 0; i < objects.length; i++) {
+            scope = objects[i].scope;
+            for (let j = 0; j < objects[i].string.length; j++) {
+                char = objects[i].string[j];
+
+                if (regexTestForSpace.test(char)) {
+                    if (objects[i].string.length >= j + 4 
+                        && objects[i].string.substring(j,j+4) == "    ") {
+                            if (word.children.length != 0) {
+                                line.appendChild(word);
+                            }
+                            word = createNewWord();
+                            word.className = "tab";
+                            createAndAppendNewLetter("   ", word,scope);
+                            j += 3;
+                        }
+                    else if (word.childElementCount == 0) {
+                        continue;
+                    }
+                    line.appendChild(word);
+                    word = createNewWord();
+                    wordCount++;
+                }
+                else if (regexTestForNonSpace.test(char)) {
+                    createAndAppendNewLetter(char,word,scope);
+                    letterCount++;
+                }
+                else if (regexTestForEnter.test(char)) {
+                    if (word.childElementCount == 0) {
+                        continue;
+                    }
+                    line.appendChild(word);
+                    lineHolder.appendChild(line);
+                    line = createNewLine();
+                    lineCount = createAndAppendLineNumber(lineCount,line);
+                    word = createNewWord();
+                    wordCount++;
+                }
+            }
+        }
+        return [letterCount, wordCount];
     }
 
-    console.log(TIME_LIMIT);
+    const arrayOfStrigObjects = createHighlightedObjects(inputString, currentLanguage);
+    const [TOTAL_LETTER_COUNT, TOTAL_WORD_COUNT] = createWordBoxDOM(arrayOfStrigObjects,wordBankDiv);
+    return arrayOfStrigObjects, TOTAL_LETTER_COUNT, TOTAL_WORD_COUNT
 }
-
-
 // Takes in a string of code and selected language as a string
 // Returns an array of objects {string, class} 
-function createHighlightedObjects(stringCode, language) {
-    if (stringCode.length === 0) {
-        console.log('String code is empty. Try another string.');
-        return;
-    }
-    // Takes in array that may have string or objects as elements
-    // If string, creates an object with that string and parent class
-    // Else, makes a recursive call to the children of the elements
-    function returnBaseObject(arrayOfObjects, parentClass) {
-        let array = [];
-        for (object of arrayOfObjects) {
-            if (typeof(object) == "string") {
-                if (parentClass != '' && !parentClass.startsWith('hljs-')) {
-                    parentClass = "hljs-".concat(parentClass);
-                }
-                array.push({string:object, scope:parentClass.replace(/\./g, " ")});
-            }
-            else {
-                array.push(...returnBaseObject(object.children, object.scope));
-            }
-        }
-        return array;
-    }
-    const rawArray = hljs.highlight(stringCode, {language: language})._emitter.rootNode.children;
-    return returnBaseObject(rawArray, "");
-}
-// Takes in an array of objects {string, class}
-// Returns # of letters, # of words 
-function createWordBoxDOM(objects, lineHolder) {
-    const regexTestForNonSpace = /[^\s]/;
-    const regexTestForSpace = / /;
-    const regexTestForEnter = /|\n|/;
-    let lineCount = 1;
-    let wordCount = 0;
-    let letterCount = 0;
 
-    function createAndAppendNewLetter(character, node, letterClass) {
-        const newLetter = document.createElement('letter');
-        newLetter.className = letterClass;
-        newLetter.classList.add('unfilled');
-        newLetter.textContent = character;
-        node.appendChild(newLetter);
-        return;
-    }
-    function createNewWord() {
-        const newWord = document.createElement('div');
-        newWord.classList.add('word');
-        return newWord;
-    }
-    function createNewLine() {
-        const newLine = document.createElement('div');
-        newLine.classList.add('line');
-        return newLine;
-    }
-    function createAndAppendLineNumber(lineNumber, line) {
-        const newNumber = document.createElement('div');
-        const letter = document.createElement('letter');
-        newNumber.classList.add('numbering');
-        if (lineNumber > 1) {
-            newNumber.classList.add('hidden');
-        }
-        letter.textContent = lineNumber.toString().padStart(3, ' ');
-        newNumber.appendChild(letter);
-        line.appendChild(newNumber);
-        return lineNumber + 1;
-    }
-
-    // For each Object
-    let word = createNewWord(objects[0].scope);
-    let line = createNewLine();
-    line.classList.add('activeLine');
-    lineCount = createAndAppendLineNumber(lineCount, line);
-
-    for (let i = 0; i < objects.length; i++) {
-        scope = objects[i].scope;
-        for (let j = 0; j < objects[i].string.length; j++) {
-            char = objects[i].string[j];
-
-            if (regexTestForSpace.test(char)) {
-                if (objects[i].string.length >= j + 4 
-                    && objects[i].string.substring(j,j+4) == "    ") {
-                        if (word.children.length != 0) {
-                            line.appendChild(word);
-                        }
-                        word = createNewWord();
-                        word.className = "tab";
-                        createAndAppendNewLetter("   ", word,scope);
-                        j += 3;
-                    }
-                else if (word.childElementCount == 0) {
-                    continue;
-                }
-                line.appendChild(word);
-                word = createNewWord();
-                wordCount++;
-            }
-            else if (regexTestForNonSpace.test(char)) {
-                createAndAppendNewLetter(char,word,scope);
-                letterCount++;
-            }
-            else if (regexTestForEnter.test(char)) {
-                if (word.childElementCount == 0) {
-                    continue;
-                }
-                line.appendChild(word);
-                lineHolder.appendChild(line);
-                line = createNewLine();
-                lineCount = createAndAppendLineNumber(lineCount,line);
-                word = createNewWord();
-                wordCount++;
-            }
-        }
-    }
-    return [letterCount, wordCount];
-}
 
 function startGame(e) {
     if (e.key != FIRST_CHAR) {
@@ -315,7 +366,7 @@ function startGame(e) {
     document.addEventListener('keydown', letterInputEvent);
     document.removeEventListener('keydown', startGame);
 
-    displayTerminal("Starting Test");
+    tabDiv.style.transform = "translateY(-100%)";
 }
 
 function letterInputEvent(e) {
@@ -540,7 +591,7 @@ function resetValues() {
 //   restart_btn.style.display = "none";
 //   cpm_group.style.display = "none";
 //   wpm_group.style.display = "none";
-    displayTerminal("Resetting Values");
+    displayTerminal("> Resetting Values");
 }
 
 function updateTimer() {
@@ -608,20 +659,16 @@ function finishGame() {
     document.removeEventListener('keydown', letterInputEvent);
     FIRST_CHAR = null;
     document.addEventListener('keydown', startGame);
-    
+    tabDiv.style.transform = "translateY(0)";
     // calculate cpm and wpm
     const charPerMin = Math.round(((charactersCorrect / timeElapsed) * 60));
     const charPerMinRaw = Math.round(((charactersTyped / timeElapsed) * 60));
     // const wordsPerMin = Math.round((((charactersCorrect / 5) / timeElapsed) * 60));
     const wordsPerMinRaw = Math.round((((charactersTyped / 5) / timeElapsed) * 60));
-
-    console.log('wpm to be calculated');
     const wordsPerMin = calculateWPM(currentWord, timeElapsed);
-
-    console.log('wpm calculated');
    
     displayResults(charPerMin, charPerMinRaw, wordsPerMin, wordsPerMinRaw);
-    displayTerminal("Test has been completed");
+    displayTerminal("> Test has been completed");
 }
 
 function displayResults(cpm, cpmr, wpm, wpmr) {
@@ -630,7 +677,7 @@ function displayResults(cpm, cpmr, wpm, wpmr) {
     cpmRawDiv.textContent = `Raw Char Per Min: ${cpmr}`;
     wpmDiv.textContent = `Words Per Min ${wpm}`;
     wpmRawDiv.textContent = `Raw Words Per Min ${wpmr}`;
-    accuracyDiv.textContent = `Accuracy: ${Math.round(10000*(cpm/cpmr))/100}`
+    accuracyDiv.textContent = `Accuracy: ${Math.round(10000*(wpm/wpmr))/100}`
     return;
 }
 

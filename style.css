@@ -186,10 +186,6 @@ template {
   color: var(--color-unfilled-font);
 }
 
-.filled-font {
-  color: var(--color-filled-font);
-}
-
 html {
     scroll-behavior: smooth;
     height: 100%;
@@ -200,31 +196,69 @@ body {
   align-items: stretch
 }
 
-#results {
+main {
+  width: 100%;
+  height: 100vh;
+}
+
+header {
+  z-index: 2;
+  width: 100%;
+  flex: none;
+  background-color: transparent;
+}
+
+.filled-font {
+  color: var(--color-filled-font);
+}
+
+.unfilled-font {
+  color: var(--color-unfilled-font);
+}
+
+.dark-grey-background {
+  background-color: var(--color-background-dark-grey);
+}
+
+.grey-background {
+  background-color: var(--color-background-grey);
+}
+
+.fixed {
   position: fixed;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.flex-col {
+  display: flex;
+  flex-flow: column;
+}
+
+.flex-center {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+#results {
+  background-color: white;
   left: 50%;
   top: 50%;
   width: 50%;
   height: 50%;
   margin-top: -15%;
   margin-left: -25%;
-  background-color: var(--color-background-dark-grey);
   border-radius: 5px;
   z-index: 99;
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  justify-content: center;
 }
 
 /* Sidebar Attributes */
 #sidebar {
   height: 100vh;
-  background-color: var(--color-background-dark-grey);
   width: var(--sidebar-length);
-  display: flex;
-  flex-flow: column;
-  align-items: center;
   z-index: 10;
 }
 
@@ -234,10 +268,6 @@ body {
 
 .icon-wrapper {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   margin-bottom: 10px;
 }
 
@@ -251,75 +281,8 @@ body {
   filter: invert(100%);
 }
 
-#user-wrapper {
-  margin-top: auto;
-}
-
-main {
-  width: 100%;
-  display: flex;
-  flex-flow: column;
-  height: 100vh;
-}
-
-.fixed {
-  position: fixed;
-}
-
-header {
-  z-index: 2;
-  width: 100%;
-  flex: none;
-}
-
-/* Header (tab) stuff */
-#tab {
-  height: 100px;
-  display: flex; 
-  align-items: stretch;
-  background: linear-gradient(to bottom, var(--color-background-dark-grey) 60%, var(--color-background-grey) 40%);
-}
-
-#tab>div {
-  width: var(--tab-width);
-  display: flex;
-  flex-flow: column;
-  align-items: stretch;
-  justify-content: center;
-}
-
-#timer-icon, #ruler-icon {
-  width: 30px;
-}
-
 .bottom-shadow {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 1);
-}
-
-#timer-tab, #text-tab{
-  flex: 6;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#timer-options, #text-options {
-  display: flex;
-  flex-flow: row;
-  flex: 4;
-  justify-content: space-around;
-  align-items: center;
-  width: var(--tab-width);
-}
-
-#text-tab:hover, #timer-tab:hover, #timer-options>div:hover, #text-options>div:hover{
-  cursor: pointer;
-  color: var(--color-filled-font);
-}
-
-#text-tab:active, #timer-tab:active, #timer-options>div:active, #text-options>div:active {
-  color: var(--color-unfilled-font);
-  text-shadow: none;
 }
 
 .selected-tab {
@@ -336,12 +299,79 @@ header {
   background-color: var(--color-background-grey);
 }
 
+#user-wrapper {
+  margin-top: auto;
+}
+
+#timer-visual {
+  width: max(20rem, 20%);
+  height: 80px;
+
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+/* Header (tab) stuff */
+#tab {
+  position: relative;
+  height: 100px;
+  display: flex; 
+  align-items: stretch;
+  background: linear-gradient(to bottom, var(--color-background-dark-grey) 60%, var(--color-background-grey) 40%);
+  transition: transform 0.3s ease-in-out;
+}
+
+#tab > div {
+  width: var(--tab-width);
+  align-items: stretch;
+  justify-content: center;
+}
+
+#timer-icon, #ruler-icon {
+  width: 30px;
+}
+
+
+#timer-tab, #text-tab{
+  flex: 6;
+}
+
+.gamemode-options {
+  display: flex;
+  flex-flow: row;
+  flex: 4;
+  justify-content: space-around;
+  align-items: stretch;
+  width: var(--tab-width);
+}
+
+.gamemode-options > div {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#text-tab:hover, #timer-tab:hover, #timer-options>div:hover, #text-options>div:hover{
+  cursor: pointer;
+  color: var(--color-filled-font);
+}
+
+#text-tab:active, #timer-tab:active, #timer-options>div:active, #text-options>div:active {
+  color: var(--color-unfilled-font);
+  text-shadow: none;
+}
 
 /* Main stuff */
 #bank-container{
   overflow-y: auto;
   flex: auto;
   z-index: 1;
+}
+
+#header-underlay {
+  height: 100px;
 }
 
 #terminal {
@@ -360,7 +390,6 @@ header {
 }
 
 #terminal-resizing {
-  background-color: var(--color-background-grey);
   content: "";
   position: sticky;
   left: 0;
@@ -392,7 +421,6 @@ header {
 div::-webkit-scrollbar-thumb {
   background-color: var(--color-unfilled-font);
 }
-
 
 div::-webkit-scrollbar {
   width: 12px;

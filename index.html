@@ -10,71 +10,74 @@
     <script src="highlight.min.js"></script>
 </head>
 <body class="hljs">
-    <div id="results" class="invisible">
+    <div id="results" class="fixed invisible">
         <div id="wpm">wpm</div>
         <div id="raw-wpm">raw wpm</div>
         <div id="cpm">wpm</div>
         <div id="raw-cpm">raw wpm</div>
         <div id="accuracy">accuracy</div>
     </div>
-
-    <div id="sidebar" class="prevent-selection">
+    <div id="sidebar" class="prevent-selection dark-grey-background flex-col flex-center">
         <a class="" tabindex="2" href="/" onclick="this.blur()" router-link="" title="logo">
             <div id="logo-wrapper" class="icon-wrapper">
                 <img src="icons/logo.svg" alt="logo icon" id="logo-icon" class="icon">
             </div>
         </a>
 
-        <a id="keyboard-wrapper" class="selected-wrapper icon-wrapper" tabindex="2" href="/" onclick="this.blur()" router-link="" title="keyboard">
+        <a id="keyboard-wrapper" class="selected-wrapper icon-wrapper flex-col flex-center" tabindex="2" href="/" onclick="this.blur()" router-link="" title="keyboard">
             <img src="icons/keyboard.svg" alt="keyboard icon" id="keyboard-icon" class="selectable-icon icon">
         </a>
-        <a id="info-wrapper" class="icon-wrapper" tabindex="2" href="about/" onclick="this.blur()" router-link="" title="about">
+        <a id="info-wrapper" class="icon-wrapper flex-col flex-center" tabindex="2" href="about/" onclick="this.blur()" router-link="" title="about">
             <img src="icons/info.svg" alt="info icon" id="info-icon" class="selectable-icon icon">
         </a>
-        <a id="user-wrapper" class="icon-wrapper" tabindex="2" href="login/" onclick="this.blur()" router-link="" title="settings">
+        <a id="user-wrapper" class="icon-wrapper flex-col flex-center" tabindex="2" href="login/" onclick="this.blur()" router-link="" title="settings">
             <img src="icons/user.svg" alt="user icon" id="user-icon" class="selectable-icon icon">
         </a>
-        <a id="setting-wrapper" class="icon-wrapper" tabindex="2" href="settings/" onclick="this.blur()" router-link="" title="settings">
+        <a id="setting-wrapper" class="icon-wrapper flex-col flex-center" tabindex="2" href="settings/" onclick="this.blur()" router-link="" title="settings">
             <img src="icons/setting.svg" alt="gear icon for settings" id="setting-icon" class="selectable-icon icon">
         </a>
-        <a id="github-wrapper" class="icon-wrapper" tabindex="2" href="https://github.com/KentonKim/codefast" target="_blank" onclick="this.blur()" router-link="" title="github">
+        <a id="github-wrapper" class="icon-wrapper flex-col flex-center" tabindex="2" href="https://github.com/KentonKim/codefast" target="_blank" onclick="this.blur()" router-link="" title="github">
             <img src="icons/github.svg" alt="github icon" id="github-icon" class="selectable-icon icon">
         </a>
     </div>
 
-    <main>
-        <header class="prevent-selection">
+    <main class="flex-col">
+        <header id="header" class="prevent-selection absolute">
             <div id="tab" class="bottom-shadow">
-                <div id="timer-div" >
-                    <div id="timer-tab" class="selected-tab">
+                <div id="timer-div" class="flex-col">
+                    <div id="timer-tab" class="selected-tab flex-center">
                         <img src="icons/timer.svg" alt="timer" id="timer-icon" class="icon"> 
                         Timed
                     </div>
-                    <div id="timer-options">
+                    <div id="timer-options" class="gamemode-options">
                         <div id="timer30">30</div>
                         <div id="timer60" class="selected-subtab">60</div>
                         <div id="timer120">120</div>
                     </div>
                 </div>
-                <div id="ruler-div">
-                    <div id="text-tab">
+                <div id="ruler-div" class="flex-col">
+                    <div id="text-tab" class="flex-center">
                         <img src="icons/ruler.svg" alt="ruler icon" id="ruler-icon" class="icon"> 
                         Length
                     </div>
-                    <div id="text-options">
+                    <div id="text-options" class="gamemode-options">
                         <div id="textS">Short</div>
                         <div id="textM">Med</div>
                         <div id="textL">Long</div>
                     </div>
                 </div>
+            </div>
+            <div id="timer-visual" class="absolute bottom-shadow dark-grey-background"> hi
+            </div>
         </header>
         <div id="bank-container">
             <div id="cursor" class="hidden"></div>
+            <div id="header-underlay"></div>
             <div id="word-bank" class="prevent-selection" tabindex="-1">
             </div>
         </div>
         <div id="terminal" class="prevent-selection filled-font">
-            <div id="terminal-resizing"></div>
+            <div id="terminal-resizing" class="dark-background"></div>
             <div id="terminal-title">
                 TERMINAL
             </div>
@@ -83,10 +86,6 @@
             </div>
         </div>
 
-        <form action="dic.com" method="post">
-            <label for="username">Username: </label>
-            <input type="password" id="username" placeholder="Username" name="username">
-        </form>
     </main>
     <script  src="app.js"></script>
 </body>
