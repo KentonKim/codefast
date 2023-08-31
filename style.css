@@ -299,6 +299,11 @@ header {
   background-color: var(--color-background-grey);
 }
 
+#retry-icon:hover {
+  transform: rotate(360deg);  
+  transition: transform 0.3s ease-out;
+}
+
 #user-wrapper {
   margin-top: auto;
 }
@@ -454,7 +459,7 @@ div:focus {
   -ms-user-select: none; /* For Internet Explorer/Edge */
 }
 
-#results.invisible {
+.invisible {
   display: none;
 }
 

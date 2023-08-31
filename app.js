@@ -11,6 +11,9 @@ const timer120Div = document.getElementById('timer120');
 const textShortDiv = document.getElementById('textS');
 const textMedDiv = document.getElementById('textM');
 const textLongDiv = document.getElementById('textL');
+const keyboardIcon = document.getElementById('keyboard-icon');
+const retryIcon = document.getElementById('retry-icon');
+
 // Terminal Divs
 const terminalDiv = document.getElementById('terminal');
 const terminalResizingDiv = document.getElementById('terminal-resizing');
@@ -111,11 +114,9 @@ let charactersSkipped = 0;
 let charactersCorrectArray = [];
 let charactersTypedArray = [];
 
-
-
 // ~~~~~~ Event Listeners ~~~~~~~
-initializeUtilityEventListeners();
 document.addEventListener('keydown', startGame); 
+initializeUtilityEventListeners();
 function initializeUtilityEventListeners() {
     // Showing shadow only if the div is scrolled
     bankContainerDiv.addEventListener('scroll', function() {
@@ -158,71 +159,87 @@ function initializeUtilityEventListeners() {
     enableSwitchGamemode();    
 }
 
+class Gamemode {
+    constructor(gamemodeDiv, submodeDiv, timeLimitInSeconds) {
+        this.gamemode = gamemodeDiv;
+        this.submode = submodeDiv;
+        this.time = timeLimitInSeconds;
+    }
+}
+
+const timer30 = new Gamemode(timerGameDiv, timer30Div, 30);
+const timer60 = new Gamemode(timerGameDiv, timer60Div, 60);
+const timer120 = new Gamemode(timerGameDiv, timer120Div, 120);
+const textShort = new Gamemode(textGameDiv, textShortDiv, 600);
+const textMed = new Gamemode(textGameDiv, textMedDiv, 600);
+const textLong = new Gamemode(textGameDiv, textLongDiv, 600);
+
 function enableSwitchGamemode() {
-    function switchGamemode(e) {
-        if (e.target == gamemodeParamDiv || e.target == currentGamemodeDiv) {
-            return;
+    function switchGamemode(object, isTab = false) {
+        if (isTab == true) {
+            if (currentGamemodeDiv === object.gamemode) {
+                return;
+            }
         }
         gamemodeParamDiv.classList.remove('selected-subtab');
         currentGamemodeDiv.classList.remove('selected-tab');
 
-        if (e.target == timerGameDiv) {
-            TIME_LIMIT = 60;
-            gamemodeParamDiv = timer60Div;
-            currentGamemodeDiv = timerGameDiv;
-            gamemodeParamDiv.classList.add('selected-subtab');
-            currentGamemodeDiv.classList.add('selected-tab');
-            return;
-        }
-        if (e.target == textGameDiv) {
-            TIME_LIMIT = 300;
-            gamemodeParamDiv = textMedDiv;
-            currentGamemodeDiv = textGameDiv;
-            gamemodeParamDiv.classList.add('selected-subtab');
-            currentGamemodeDiv.classList.add('selected-tab');
-            return;
-        }
-
-        gamemodeParamDiv= e.target;
+        gamemodeParamDiv = object.submode;
+        currentGamemodeDiv = object.gamemode;
+        TIME_LIMIT = object.time 
         gamemodeParamDiv.classList.add('selected-subtab');
-        currentGamemodeDiv.classList.remove('selected-tab');
-        switch (e.target) {
-            case timer30Div:
-                TIME_LIMIT = 30;
-                currentGamemodeDiv = timerGameDiv;
-                break;
-            case timer60Div:
-                TIME_LIMIT = 60;
-                currentGamemodeDiv = timerGameDiv;
-                break;
-            case timer120Div:
-                TIME_LIMIT = 120;
-                currentGamemodeDiv = timerGameDiv;
-                break;
-            case textShortDiv:
-                TIME_LIMIT = 300;
-                currentGamemodeDiv = textGameDiv;
-                break;
-            case textMedDiv:
-                TIME_LIMIT = 300;
-                currentGamemodeDiv = textGameDiv;
-                break;
-            case textLongDiv:
-                TIME_LIMIT = 300;
-                currentGamemodeDiv = textGameDiv;
-                break;
-        }
-
         currentGamemodeDiv.classList.add('selected-tab');
+        return;
+        // }
+        // if (e.target == textGameDiv) {
+        //     TIME_LIMIT = 600;
+        //     gamemodeParamDiv = textMedDiv;
+        //     currentGamemodeDiv = textGameDiv;
+        //     gamemodeParamDiv.classList.add('selected-subtab');
+        //     currentGamemodeDiv.classList.add('selected-tab');
+        //     return;
+        // }
+
+        // gamemodeParamDiv= e.target;
+        // gamemodeParamDiv.classList.add('selected-subtab');
+        // currentGamemodeDiv.classList.remove('selected-tab');
+        // switch (e.target) {
+        //     case timer30Div:
+        //         TIME_LIMIT = 30;
+        //         currentGamemodeDiv = timerGameDiv;
+        //         break;
+        //     case timer60Div:
+        //         TIME_LIMIT = 60;
+        //         currentGamemodeDiv = timerGameDiv;
+        //         break;
+        //     case timer120Div:
+        //         TIME_LIMIT = 120;
+        //         currentGamemodeDiv = timerGameDiv;
+        //         break;
+        //     case textShortDiv:
+        //         TIME_LIMIT = 600;
+        //         currentGamemodeDiv = textGameDiv;
+        //         break;
+        //     case textMedDiv:
+        //         TIME_LIMIT = 600;
+        //         currentGamemodeDiv = textGameDiv;
+        //         break;
+        //     case textLongDiv:
+        //         TIME_LIMIT = 600;
+        //         currentGamemodeDiv = textGameDiv;
+        //         break;
+        // }
+
+        // currentGamemodeDiv.classList.add('selected-tab');
     }
-    timer30Div.addEventListener('mouseup', switchGamemode);
-    timer60Div.addEventListener('mouseup', switchGamemode);
-    timer120Div.addEventListener('mouseup', switchGamemode);
-    textShortDiv.addEventListener('mouseup', switchGamemode);
-    textMedDiv.addEventListener('mouseup', switchGamemode);
-    textLongDiv.addEventListener('mouseup', switchGamemode);
-    timerGameDiv.addEventListener('mouseup', switchGamemode);
-    textGameDiv.addEventListener('mouseup', switchGamemode);
+    timer30Div.addEventListener('mouseup', function() {switchGamemode(timer30)});
+    timer60Div.addEventListener('mouseup', function() {switchGamemode(timer60)});
+    timer120Div.addEventListener('mouseup', function() {switchGamemode(timer120)});
+    textShortDiv.addEventListener('mouseup', function() {switchGamemode(textShort)});
+    textMedDiv.addEventListener('mouseup', function() {switchGamemode(textMed)});
+    textLongDiv.addEventListener('mouseup', function() {switchGamemode(textLong)});
+    timerGameDiv.addEventListener('mouseup', function() {switchGamemode(timer60, true)});
+    textGameDiv.addEventListener('mouseup', function() {switchGamemode(textMed, true)});
 }
 
 function implementString(string) {
@@ -363,6 +380,7 @@ function startGame(e) {
     animateCursorblink();
     }, 530);
     letterInputEvent(e);
+    toggleKeyboard();
     document.addEventListener('keydown', letterInputEvent);
     document.removeEventListener('keydown', startGame);
     displayTerminal('Starting test')
@@ -649,9 +667,10 @@ function finishGame() {
     // stop the timer
     clearInterval(timer);
     clearInterval(animateCursorblink);
+    toggleKeyboard();
     // disable the input area
-    document.removeEventListener('keydown', letterInputEvent);
     FIRST_CHAR = null;
+    document.removeEventListener('keydown', letterInputEvent);
     document.addEventListener('keydown', startGame);
     tabDiv.style.transform = "translateY(0)";
     // calculate cpm and wpm
@@ -675,11 +694,6 @@ function displayResults(cpm, cpmr, wpm, wpmr) {
     return;
 }
 
-// Function to scroll the container to the bottom
-function scrollToBottom(container) {
-    container.scrollTop = container.scrollHeight;
-}
-
 // Callback function for the MutationObserver
 function handleMutation(mutationsList, observer) {
     console.log(mutationsList);
@@ -698,6 +712,10 @@ function addChildDiv(container) {
   container.appendChild(newDiv);
 }
 
+// Function to scroll the container to the bottom
+function scrollToBottom(container) {
+    container.scrollTop = container.scrollHeight;
+}
 // Scroll up/down a line depending on if the current line exceeds a midrange of the containers 
 function checkScroll(scrollDiv, scrollRect, lineElement,changeInPixels, limitInPercentage, isDown = true) {
     if ((!isDown && scrollDiv.scrollTop == 0) 
@@ -723,7 +741,7 @@ function displayTerminal(string) {
     return;
 }
 
-
-function getGamemode() {
-
+function toggleKeyboard() {
+    keyboardIcon.classList.toggle('invisible');
+    retryIcon.classList.toggle('invisible');
 }
