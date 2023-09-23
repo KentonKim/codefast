@@ -9,14 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="highlight.min.js"></script>
 </head>
-<body class="hljs">
-    <div id="results" class="fixed invisible">
-        <div id="wpm">wpm</div>
-        <div id="raw-wpm">raw wpm</div>
-        <div id="cpm">wpm</div>
-        <div id="raw-cpm">raw wpm</div>
-        <div id="accuracy">accuracy</div>
-    </div>
+<body class="hljs" >
     <div id="sidebar" class="prevent-selection dark-grey-background flex-col flex-center">
         <a class="" tabindex="2" href="/" onclick="this.blur()" router-link="" title="logo">
             <div id="logo-wrapper" class="icon-wrapper">
@@ -41,52 +34,83 @@
             <img src="icons/github.svg" alt="github icon" id="github-icon" class="selectable-icon icon">
         </a>
     </div>
-
+    <div id="results" class="fixed invisible">
+        <div id="wpm">wpm</div>
+        <div id="raw-wpm">raw wpm</div>
+        <div id="cpm">wpm</div>
+        <div id="raw-cpm">raw wpm</div>
+        <div id="accuracy">accuracy</div>
+    </div>
+    <div id="login-popup" class="fixed popup">
+        <div class="cancel icon-wrapper flex-col flex-center">
+            <img src="icons/cancel.svg" alt="cancel icon" id="cancel-icon" class="selectable-icon icon">
+        </div>
+        <div id="sign-up" class="form">
+            Sign up
+            <form action="" method="POST" class="flex-col">
+                <input type="text" id="username" name="username" placeholder="username" minlength="6" maxlength="20" required>
+                <input type="email" id="email" name="email" placeholder="email" required>
+                <input type="email" id="cemail" name="cemail" placeholder="verify email" required>
+                <input type="password" id="password" name="password" placeholder="password" required>
+                <input type="password" id="cpassword" name="cpassword" placeholder="verify password" required>
+                <button>Sign Up</button>
+            </form>
+        </div>
+        <div id="login" class="form">
+            Login
+            <form action="" method="get" class="flex-col">
+                <input type="text" id="uname" name="uname" placeholder="username" required>
+                <input type="password" id="password" name="password" placeholder="password" required>
+                <button>Login</button>
+            </form>
+        </div>
+    </div>
     <main class="flex-col">
-        <header id="header" class="prevent-selection absolute">
-            <div id="tab" class="bottom-shadow">
-                <div id="timer-div" class="flex-col">
-                    <div id="timer-tab" class="selected-tab flex-center">
-                        <img src="icons/timer.svg" alt="timer" id="timer-icon" class="icon"> 
-                        Timed
+        <div id="main-page" class="flex-col page">
+            <header id="header" class="prevent-selection absolute">
+                <div id="tab" class="bottom-shadow">
+                    <div id="timer-div" class="flex-col">
+                        <div id="timer-tab" class="selected-tab flex-center">
+                            <img src="icons/timer.svg" alt="timer" id="timer-icon" class="icon"> 
+                            Timed
+                        </div>
+                        <div id="timer-options" class="gamemode-options">
+                            <div id="timer30">30</div>
+                            <div id="timer60" class="selected-subtab">60</div>
+                            <div id="timer120">120</div>
+                        </div>
                     </div>
-                    <div id="timer-options" class="gamemode-options">
-                        <div id="timer30">30</div>
-                        <div id="timer60" class="selected-subtab">60</div>
-                        <div id="timer120">120</div>
+                    <div id="ruler-div" class="flex-col">
+                        <div id="text-tab" class="flex-center">
+                            <img src="icons/ruler.svg" alt="ruler icon" id="ruler-icon" class="icon"> 
+                            Length
+                        </div>
+                        <div id="text-options" class="gamemode-options">
+                            <div id="textS">Short</div>
+                            <div id="textM">Med</div>
+                            <div id="textL">Long</div>
+                        </div>
                     </div>
                 </div>
-                <div id="ruler-div" class="flex-col">
-                    <div id="text-tab" class="flex-center">
-                        <img src="icons/ruler.svg" alt="ruler icon" id="ruler-icon" class="icon"> 
-                        Length
-                    </div>
-                    <div id="text-options" class="gamemode-options">
-                        <div id="textS">Short</div>
-                        <div id="textM">Med</div>
-                        <div id="textL">Long</div>
-                    </div>
+                <!-- <div id="timer-visual" class="absolute bottom-shadow dark-grey-background"> hi
+                </div> -->
+            </header>
+            <div id="bank-container">
+                <div id="cursor" class="hidden"></div>
+                <div id="header-underlay"></div>
+                <div id="word-bank" class="prevent-selection" tabindex="-1">
                 </div>
             </div>
-            <!-- <div id="timer-visual" class="absolute bottom-shadow dark-grey-background"> hi
-            </div> -->
-        </header>
-        <div id="bank-container">
-            <div id="cursor" class="hidden"></div>
-            <div id="header-underlay"></div>
-            <div id="word-bank" class="prevent-selection" tabindex="-1">
+            <div id="terminal" class="prevent-selection filled-font">
+                <div id="terminal-resizing" class="grey-background"></div>
+                <div id="terminal-title">
+                    TERMINAL
+                </div>
+                <div class="terminal-line">
+                    C:Users/Guest101> CODE IT.FAST 
+                </div>
             </div>
         </div>
-        <div id="terminal" class="prevent-selection filled-font">
-            <div id="terminal-resizing" class="grey-background"></div>
-            <div id="terminal-title">
-                TERMINAL
-            </div>
-            <div class="terminal-line">
-                C:Users/Guest101> CODE IT.FAST 
-            </div>
-        </div>
-
     </main>
     <script  src="app.js"></script>
 </body>

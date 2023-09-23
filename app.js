@@ -190,47 +190,6 @@ function enableSwitchGamemode() {
         gamemodeParamDiv.classList.add('selected-subtab');
         currentGamemodeDiv.classList.add('selected-tab');
         return;
-        // }
-        // if (e.target == textGameDiv) {
-        //     TIME_LIMIT = 600;
-        //     gamemodeParamDiv = textMedDiv;
-        //     currentGamemodeDiv = textGameDiv;
-        //     gamemodeParamDiv.classList.add('selected-subtab');
-        //     currentGamemodeDiv.classList.add('selected-tab');
-        //     return;
-        // }
-
-        // gamemodeParamDiv= e.target;
-        // gamemodeParamDiv.classList.add('selected-subtab');
-        // currentGamemodeDiv.classList.remove('selected-tab');
-        // switch (e.target) {
-        //     case timer30Div:
-        //         TIME_LIMIT = 30;
-        //         currentGamemodeDiv = timerGameDiv;
-        //         break;
-        //     case timer60Div:
-        //         TIME_LIMIT = 60;
-        //         currentGamemodeDiv = timerGameDiv;
-        //         break;
-        //     case timer120Div:
-        //         TIME_LIMIT = 120;
-        //         currentGamemodeDiv = timerGameDiv;
-        //         break;
-        //     case textShortDiv:
-        //         TIME_LIMIT = 600;
-        //         currentGamemodeDiv = textGameDiv;
-        //         break;
-        //     case textMedDiv:
-        //         TIME_LIMIT = 600;
-        //         currentGamemodeDiv = textGameDiv;
-        //         break;
-        //     case textLongDiv:
-        //         TIME_LIMIT = 600;
-        //         currentGamemodeDiv = textGameDiv;
-        //         break;
-        // }
-
-        // currentGamemodeDiv.classList.add('selected-tab');
     }
     timer30Div.addEventListener('mouseup', function() {switchGamemode(timer30)});
     timer60Div.addEventListener('mouseup', function() {switchGamemode(timer60)});

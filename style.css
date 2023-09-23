@@ -193,12 +193,11 @@ html {
 
 body {
   display: flex;
-  align-items: stretch
+  align-items: stretch;
 }
 
 main {
   width: 100%;
-  height: 100vh;
 }
 
 header {
@@ -243,6 +242,9 @@ header {
   display: flex;
 }
 
+
+
+
 #results {
   background-color: white;
   left: 50%;
@@ -279,6 +281,7 @@ header {
 
 .icon-wrapper:hover .selectable-icon{
   filter: invert(100%);
+  cursor: pointer;
 }
 
 .bottom-shadow {
@@ -299,8 +302,8 @@ header {
   background-color: var(--color-background-grey);
 }
 
-#retry-icon:hover {
-  transform: rotate(360deg);  
+#keyboard-wrapper:hover > #retry-icon {
+  transform: rotate(-180deg);  
   transition: transform 0.3s ease-out;
 }
 
@@ -308,13 +311,45 @@ header {
   margin-top: auto;
 }
 
-#timer-visual {
-  width: max(20rem, 20%);
-  height: 80px;
+/* Pages */
+.page {
+  width: 100%;
+  height: 100vh;
+}
 
-  left: 50%;
+/* Login popup*/
+#login-popup {
+  top: 30vh;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+
+.cancel {
+  width: 10%;
+  position: absolute;
+  right: 0;
   top: 0;
-  transform: translateX(-50%);
+  margin: 0;
+}
+
+.form {
+  margin: 20px;
+}
+
+.popup {
+  background-color: var(--color-background-grey);
+  border: 3px solid var(--color-background-dark-grey);
+  border-radius: 10px;
+  z-index: 99;
+}
+
+#cancel-icon {
+  margin: 0;
+}
+
+input {
+  margin-bottom: 10px;
 }
 
 /* Header (tab) stuff */
@@ -336,7 +371,6 @@ header {
 #timer-icon, #ruler-icon {
   width: 30px;
 }
-
 
 #timer-tab, #text-tab{
   flex: 6;
@@ -368,7 +402,7 @@ header {
   text-shadow: none;
 }
 
-/* Main stuff */
+/* Main Page stuff */
 #bank-container{
   overflow-y: auto;
   flex: auto;
@@ -389,7 +423,6 @@ header {
   transition: border-top 0.1s ease, overflow-y 0.5 ease;
   padding-left: 20px;
 }
-
 
 #terminal.show-scrollbar {
   overflow-y: auto;
