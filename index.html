@@ -24,7 +24,7 @@
         <a id="info-wrapper" class="icon-wrapper flex-col flex-center" tabindex="2" href="about/" onclick="this.blur()" router-link="" title="about">
             <img src="icons/info.svg" alt="info icon" id="info-icon" class="selectable-icon icon">
         </a>
-        <a id="user-wrapper" class="icon-wrapper flex-col flex-center" tabindex="2" href="login/" onclick="this.blur()" router-link="" title="settings">
+        <a id="user-wrapper" class="icon-wrapper flex-col flex-center" tabindex="2" href="/" onclick="this.blur()" router-link="" title="settings">
             <img src="icons/user.svg" alt="user icon" id="user-icon" class="selectable-icon icon">
         </a>
         <a id="setting-wrapper" class="icon-wrapper flex-col flex-center" tabindex="2" href="settings/" onclick="this.blur()" router-link="" title="settings">
@@ -40,30 +40,6 @@
         <div id="cpm">wpm</div>
         <div id="raw-cpm">raw wpm</div>
         <div id="accuracy">accuracy</div>
-    </div>
-    <div id="login-popup" class="fixed popup">
-        <div class="cancel icon-wrapper flex-col flex-center">
-            <img src="icons/cancel.svg" alt="cancel icon" id="cancel-icon" class="selectable-icon icon">
-        </div>
-        <div id="sign-up" class="form">
-            Sign up
-            <form action="" method="POST" class="flex-col">
-                <input type="text" id="username" name="username" placeholder="username" minlength="6" maxlength="20" required>
-                <input type="email" id="email" name="email" placeholder="email" required>
-                <input type="email" id="cemail" name="cemail" placeholder="verify email" required>
-                <input type="password" id="password" name="password" placeholder="password" required>
-                <input type="password" id="cpassword" name="cpassword" placeholder="verify password" required>
-                <button>Sign Up</button>
-            </form>
-        </div>
-        <div id="login" class="form">
-            Login
-            <form action="" method="get" class="flex-col">
-                <input type="text" id="uname" name="uname" placeholder="username" required>
-                <input type="password" id="password" name="password" placeholder="password" required>
-                <button>Login</button>
-            </form>
-        </div>
     </div>
     <main class="flex-col">
         <div id="main-page" class="flex-col page">
@@ -111,6 +87,28 @@
                 </div>
             </div>
         </div>
+        <div id="login-page" class="invisible flex-center page">
+            <div id="sign-up" class="form">
+                Sign up
+                <form action="" method="POST" class="flex-col">
+                    <input type="text" id="username" name="username" placeholder="username" minlength="6" maxlength="20" required>
+                    <input type="email" id="email" name="email" placeholder="email" required>
+                    <input type="email" id="cemail" name="cemail" placeholder="verify email" required>
+                    <input type="password" id="password" name="password" placeholder="password" required>
+                    <input type="password" id="cpassword" name="cpassword" placeholder="verify password" required>
+                    <button>Sign Up</button>
+                </form>
+            </div>
+            <div id="login" class="form">
+                Login
+                <form action="" method="get" class="flex-col">
+                    <input type="text" id="uname" name="uname" placeholder="username" required>
+                    <input type="password" id="password" name="password" placeholder="password" required>
+                    <button>Login</button>
+                </form>
+            </div>
+        </div>
+
     </main>
     <script  src="app.js"></script>
 </body>

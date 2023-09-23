@@ -14,6 +14,16 @@ const textLongDiv = document.getElementById('textL');
 const keyboardIcon = document.getElementById('keyboard-icon');
 const retryIcon = document.getElementById('retry-icon');
 
+// Page Divs
+const mainPageDiv = document.getElementById('main-page');
+const loginPageDiv = document.getElementById('login-page');
+
+// Sidebar Links
+const mainPageIcon = document.getElementById('keyboard-wrapper');
+const infoPageIcon = document.getElementById('info-wrapper');
+const loginPageIcon = document.getElementById('user-wrapper');
+const settingsPageIcon = document.getElementById('setting-wrapper');
+
 // Terminal Divs
 const terminalDiv = document.getElementById('terminal');
 const terminalResizingDiv = document.getElementById('terminal-resizing');
@@ -173,6 +183,10 @@ const timer120 = new Gamemode(timerGameDiv, timer120Div, 120);
 const textShort = new Gamemode(textGameDiv, textShortDiv, 600);
 const textMed = new Gamemode(textGameDiv, textMedDiv, 600);
 const textLong = new Gamemode(textGameDiv, textLongDiv, 600);
+
+function switchPages() {
+
+}
 
 function enableSwitchGamemode() {
     function switchGamemode(object, isTab = false) {

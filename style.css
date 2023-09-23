@@ -319,10 +319,6 @@ header {
 
 /* Login popup*/
 #login-popup {
-  top: 30vh;
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
 }
 
 .cancel {
@@ -334,14 +330,8 @@ header {
 }
 
 .form {
-  margin: 20px;
-}
-
-.popup {
-  background-color: var(--color-background-grey);
-  border: 3px solid var(--color-background-dark-grey);
-  border-radius: 10px;
-  z-index: 99;
+  width: 200px;
+  margin: 50px;
 }
 
 #cancel-icon {
