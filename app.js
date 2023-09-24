@@ -19,6 +19,7 @@ const mainPageDiv = document.getElementById('main-page');
 const loginPageDiv = document.getElementById('login-page');
 
 // Sidebar Links
+const mainPageLogoIcon = document.getElementById('logo-wrapper');
 const mainPageIcon = document.getElementById('keyboard-wrapper');
 const infoPageIcon = document.getElementById('info-wrapper');
 const loginPageIcon = document.getElementById('user-wrapper');
@@ -167,6 +168,15 @@ function initializeUtilityEventListeners() {
     terminalDiv.classList.remove('show-scrollbar');
     });
     enableSwitchGamemode();    
+    mainPageIcon.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchPages(mainPageDiv)});
+    mainPageLogoIcon.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchPages(mainPageDiv)});
+    loginPageIcon.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchPages(loginPageDiv)});
 }
 
 class Gamemode {
@@ -184,8 +194,11 @@ const textShort = new Gamemode(textGameDiv, textShortDiv, 600);
 const textMed = new Gamemode(textGameDiv, textMedDiv, 600);
 const textLong = new Gamemode(textGameDiv, textLongDiv, 600);
 
-function switchPages() {
+function switchPages(page) {
+    mainPageDiv.classList.add('invisible');
+    loginPageDiv.classList.add('invisible');
 
+    page.classList.remove('invisible');
 }
 
 function enableSwitchGamemode() {
